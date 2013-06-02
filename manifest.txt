@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Extension-Name: inf
+Class-Manager: org.nlogo.extensions.inf.InfExtension
+NetLogo-Extension-API-Version: 5.0
