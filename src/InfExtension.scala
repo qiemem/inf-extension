@@ -31,6 +31,8 @@ class InfExtension extends DefaultClassManager {
     primitiveManager.addPrimitive("set-xcor", setXcor(_: Turtle, _: Double))
     primitiveManager.addPrimitive("set-ycor", setYcor(_: Turtle, _: Double))
     primitiveManager.addPrimitive("set-size", setSize(_: Turtle, _: Double))
+    primitiveManager.addPrimitive("forward", forward(_: Turtle, _: Double))
+    primitiveManager.addPrimitive("fd", forward(_: Turtle, _: Double))
   }
 }
 
@@ -110,6 +112,11 @@ object InfTopology {
   def setSize(t: Turtle, s: Double) = {
     sizes(t) = s
     updateVisibility(t)
+  }
+
+  def forward(turtle: Turtle, dist: Double) = {
+    val t = turtle.asInstanceOf[agent.Turtle]
+    setXY(t, t.dx() * dist + xcors(t), t.dy() * dist + ycors(t))
   }
 }
 

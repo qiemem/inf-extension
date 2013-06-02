@@ -214,10 +214,10 @@ NIL
 1
 
 MONITOR
-20
-340
-202
-385
+15
+425
+197
+470
 NIL
 inf:to-inf-xcor mouse-xcor
 5
@@ -225,15 +225,32 @@ inf:to-inf-xcor mouse-xcor
 11
 
 MONITOR
-20
-390
-202
-435
+15
+475
+197
+520
 NIL
 inf:to-inf-ycor mouse-ycor
 5
 1
 11
+
+BUTTON
+40
+340
+155
+373
+NIL
+inf:fd .01
+T
+1
+T
+TURTLE
+NIL
+NIL
+NIL
+NIL
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
