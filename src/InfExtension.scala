@@ -28,6 +28,9 @@ class InfExtension extends DefaultClassManager {
     primitiveManager.addPrimitive("set-zoom", setZoom(_: World, _: Double))
     primitiveManager.addPrimitive("set-center", setCenter(_: World, _: Double, _: Double))
     primitiveManager.addPrimitive("setxy", setXY(_: Turtle, _: Double, _: Double))
+    primitiveManager.addPrimitive("set-xcor", setXcor(_: Turtle, _: Double))
+    primitiveManager.addPrimitive("set-ycor", setYcor(_: Turtle, _: Double))
+    primitiveManager.addPrimitive("set-size", setSize(_: Turtle, _: Double))
   }
 }
 
@@ -93,6 +96,21 @@ object InfTopology {
     ycors(t) = y
     updateVisibility(t)
   }
+
+  def setXcor(t: Turtle, x: Double) = {
+    xcors(t) = x
+    updateVisibility(t)
+  }
+
+  def setYcor(t: Turtle, y: Double) = {
+    ycors(t) = y
+    updateVisibility(t)
+  }
+
+  def setSize(t: Turtle, s: Double) = {
+    sizes(t) = s
+    updateVisibility(t)
+  }
 }
 
 object PrimitiveConverters {
@@ -123,30 +141,40 @@ object PrimitiveConverters {
   }
 
   implicit def commandWorldDouble(func: (World, Double) => Unit): Command ={
-    object DoubleCommand extends DefaultCommand {
+    object WorldCommand extends DefaultCommand {
       override def getSyntax = commandSyntax(Array(NumberType))
       override def perform(args: Array[Argument], context: Context) =
         func(context.getAgent.world, args(0).getDoubleValue)
     }
-    DoubleCommand
+    WorldCommand
   }
 
   implicit def commandWorldDoubleDouble(func: (World, Double, Double) => Unit): Command ={
-    object DoubleCommand extends DefaultCommand {
+    object WorldCommand extends DefaultCommand {
       override def getSyntax = commandSyntax(Array(NumberType, NumberType))
       override def perform(args: Array[Argument], context: Context) =
         func(context.getAgent.world, args(0).getDoubleValue, args(1).getDoubleValue)
     }
-    DoubleCommand
+    WorldCommand
+  }
+
+  implicit def commandTurtleDouble(func: (Turtle, Double) => Unit): Command ={
+    object TurtleCommand extends DefaultCommand {
+      override def getAgentClassString = "T"
+      override def getSyntax = commandSyntax(Array(NumberType))
+      override def perform(args: Array[Argument], context: Context) =
+        func(context.getAgent.asInstanceOf[Turtle], args(0).getDoubleValue)
+    }
+    TurtleCommand
   }
 
   implicit def commandTurtleDoubleDouble(func: (Turtle, Double, Double) => Unit): Command ={
-    object DoubleCommand extends DefaultCommand {
+    object TurtleCommand extends DefaultCommand {
       override def getAgentClassString = "T"
       override def getSyntax = commandSyntax(Array(NumberType, NumberType))
       override def perform(args: Array[Argument], context: Context) =
         func(context.getAgent.asInstanceOf[Turtle], args(0).getDoubleValue, args(1).getDoubleValue)
     }
-    DoubleCommand
+    TurtleCommand
   }
 }
