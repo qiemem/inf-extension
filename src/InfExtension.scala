@@ -18,16 +18,16 @@ class InfExtension extends DefaultClassManager {
     primitiveManager.addPrimitive("to-inf-xcor", toInfXcor(_: Double))
     primitiveManager.addPrimitive("to-inf-ycor", toInfYcor(_: Double))
     primitiveManager.addPrimitive("to-inf-size", toInfSize(_: Double))
-    primitiveManager.addPrimitive("to-view-xcor",toViewXcor(_: Double))
+    primitiveManager.addPrimitive("to-view-xcor", toViewXcor(_: Double))
     primitiveManager.addPrimitive("to-view-ycor", toViewYcor(_: Double))
     primitiveManager.addPrimitive("to-view-size", toViewSize(_: Double))
     primitiveManager.addPrimitive("xcor", xcors)
     primitiveManager.addPrimitive("ycor", ycors)
     primitiveManager.addPrimitive("size", sizes)
 
-    primitiveManager.addPrimitive("set-zoom", InfTopology.SetZoom)
-    primitiveManager.addPrimitive("set-center", InfTopology.SetCenter)
-    primitiveManager.addPrimitive("setxy", InfTopology.SetXY)
+    primitiveManager.addPrimitive("set-zoom", setZoom(_: World, _: Double))
+    primitiveManager.addPrimitive("set-center", setCenter(_: World, _: Double, _: Double))
+    primitiveManager.addPrimitive("setxy", setXY(_: Turtle, _: Double, _: Double))
   }
 }
 
@@ -44,22 +44,23 @@ object InfTopology {
   val ycors = new WeakHashMap[Turtle, Double]() withDefaultValue 0.0
   val sizes = new WeakHashMap[Turtle, Double]() withDefaultValue 1.0
 
-  def updateVisibility(turtle: agent.Turtle) = {
-    val xcor = toViewXcor(xcors(turtle))
-    val ycor = toViewYcor(ycors(turtle))
-    val size = toViewSize(sizes(turtle))
-    val w = turtle.world
+  def updateVisibility(turtle: Turtle) = {
+    val t = turtle.asInstanceOf[agent.Turtle]
+    val xcor = toViewXcor(xcors(t))
+    val ycor = toViewYcor(ycors(t))
+    val size = toViewSize(sizes(t))
+    val w = t.world
     val minXcor = w.minPxcor - 0.5
     val maxXcor = w.maxPxcor + 0.5
     val minYcor = w.minPycor - 0.5
     val maxYcor = w.maxPycor + 0.5
 
     if (xcor < minXcor || maxXcor < xcor || ycor < minYcor || maxYcor < ycor) {
-      turtle hidden true
+      t hidden true
     } else {
-      turtle hidden false
-      turtle.xandycor(xcor, ycor)
-      turtle size size
+      t hidden false
+      t.xandycor(xcor, ycor)
+      t size size
     }
   }
 
@@ -76,50 +77,26 @@ object InfTopology {
   def toViewYcor(infYcor: Double): Double = (infYcor - centerYcor) * zoom
   def toViewSize(infSize: Double): Double = infSize * zoom
 
-  object SetZoom extends DefaultCommand {
-    override def getSyntax = commandSyntax(Array(NumberType))
-
-    override def perform(args: Array[Argument], context: Context) = {
-      val newZoom = args(0).getDoubleValue
-      if (zoom != newZoom) {
-        zoom = newZoom
-        updateVisibility(context.getAgent.world)
-      }
-    }
+  def setZoom(w: World, z: Double) = if (z != zoom) {
+    zoom = z
+    updateVisibility(w)
   }
 
-  object SetCenter extends DefaultCommand {
-    override def getSyntax = commandSyntax(Array(NumberType, NumberType))
-
-    override def perform(args: Array[Argument], context: Context) = {
-      val centerX = args(0).getDoubleValue
-      val centerY = args(1).getDoubleValue
-      if (centerX != centerXcor || centerY != centerYcor) {
-        centerXcor = centerX
-        centerYcor = centerY
-        updateVisibility(context.getAgent.world)
-      }
-    }
+  def setCenter(w: World, x: Double, y: Double) = if (x != centerXcor || y != centerYcor) {
+    centerXcor = x
+    centerYcor = y
+    updateVisibility(w)
   }
 
-  object SetXY extends Command {
-    override def getSyntax =
-      commandSyntax(Array(NumberType, NumberType))
-
-    override def getAgentClassString = "T"
-    override def getSwitchesBoolean = true
-
-    override def perform(args: Array[Argument], context: Context) = {
-      val turtle = context.getAgent.asInstanceOf[agent.Turtle]
-      xcors(turtle) = args(0).getDoubleValue
-      ycors(turtle) = args(1).getDoubleValue
-      updateVisibility(turtle)
-    }
+  def setXY(t: Turtle, x: Double, y: Double) = {
+    xcors(t) = x
+    ycors(t) = y
+    updateVisibility(t)
   }
 }
 
 object PrimitiveConverters {
-  implicit def double(getter: =>Double): Primitive = {
+  implicit def reporterDouble(getter: =>Double): Reporter = {
     object Getter extends DefaultReporter {
       override def report(args: Array[Argument], context: Context): AnyRef =
        getter: java.lang.Double
@@ -127,7 +104,7 @@ object PrimitiveConverters {
     Getter
   }
 
-  implicit def doubleDouble(func: (Double) => Double): Primitive = {
+  implicit def reporterDoubleDouble(func: (Double) => Double): Reporter = {
     object FuncReporter extends DefaultReporter {
       override def getSyntax() = reporterSyntax(Array(NumberType), NumberType)
       override def report(args: Array[Argument], context: Context): AnyRef =
@@ -136,12 +113,40 @@ object PrimitiveConverters {
     FuncReporter
   }
 
-  implicit def turtleDouble(func: (Turtle) => Double): Primitive = {
+  implicit def reporterTurtleDouble(func: (Turtle) => Double): Reporter = {
     object TurtleReporter extends DefaultReporter {
       override def getAgentClassString = "T"
       override def report(args: Array[Argument], context: Context): AnyRef =
         func(context.getAgent.asInstanceOf[Turtle]): java.lang.Double
     }
     TurtleReporter
+  }
+
+  implicit def commandWorldDouble(func: (World, Double) => Unit): Command ={
+    object DoubleCommand extends DefaultCommand {
+      override def getSyntax = commandSyntax(Array(NumberType))
+      override def perform(args: Array[Argument], context: Context) =
+        func(context.getAgent.world, args(0).getDoubleValue)
+    }
+    DoubleCommand
+  }
+
+  implicit def commandWorldDoubleDouble(func: (World, Double, Double) => Unit): Command ={
+    object DoubleCommand extends DefaultCommand {
+      override def getSyntax = commandSyntax(Array(NumberType, NumberType))
+      override def perform(args: Array[Argument], context: Context) =
+        func(context.getAgent.world, args(0).getDoubleValue, args(1).getDoubleValue)
+    }
+    DoubleCommand
+  }
+
+  implicit def commandTurtleDoubleDouble(func: (Turtle, Double, Double) => Unit): Command ={
+    object DoubleCommand extends DefaultCommand {
+      override def getAgentClassString = "T"
+      override def getSyntax = commandSyntax(Array(NumberType, NumberType))
+      override def perform(args: Array[Argument], context: Context) =
+        func(context.getAgent.asInstanceOf[Turtle], args(0).getDoubleValue, args(1).getDoubleValue)
+    }
+    DoubleCommand
   }
 }
