@@ -33,9 +33,9 @@ object InfTopology {
   val sizes = new WeakHashMap[Turtle, Double]() withDefaultValue 1.0
 
   def updateVisibility(turtle: agent.Turtle) = {
-    val xcor = (xcors(turtle) - centerXcor) * zoom
-    val ycor = (ycors(turtle) - centerYcor) * zoom
-    val size = sizes(turtle) * zoom
+    val xcor = toViewXcor(xcors(turtle))
+    val ycor = toViewYcor(ycors(turtle))
+    val size = toViewSize(sizes(turtle))
     val w = turtle.world
     val minXcor = w.minPxcor - 0.5
     val maxXcor = w.maxPxcor + 0.5
@@ -55,6 +55,14 @@ object InfTopology {
     world.turtles.agents.asScala foreach { (a: Agent) =>
       updateVisibility(a.asInstanceOf[agent.Turtle])
     }
+
+
+  def toInfXcor(viewXcor: Double): Double = viewXcor / zoom + centerXcor
+  def toInfYcor(viewYcor: Double): Double = viewYcor / zoom + centerYcor
+  def toInfSize(viewSize: Double): Double = viewSize / zoom
+  def toViewXcor(infXcor: Double): Double = (infXcor - centerXcor) * zoom
+  def toViewYcor(infYcor: Double): Double = (infYcor - centerYcor) * zoom
+  def toViewSize(infSize: Double): Double = infSize * zoom
 
   object Zoom extends DefaultReporter {
     override def report(args: Array[Argument], context: Context): AnyRef =
