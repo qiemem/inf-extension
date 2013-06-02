@@ -9,16 +9,21 @@ import scala.collection.mutable.WeakHashMap
 import scala.collection.JavaConverters._
 
 class InfExtension extends DefaultClassManager {
+  import InfTopology._
+  import PrimitiveConverters._
   def load(primitiveManager: PrimitiveManager) {
-    primitiveManager.addPrimitive("zoom", AsReporter(InfTopology.zoom))
-    primitiveManager.addPrimitive("center-xcor", AsReporter(InfTopology.centerXcor))
-    primitiveManager.addPrimitive("center-ycor", AsReporter(InfTopology.centerYcor))
-    primitiveManager.addPrimitive("to-inf-xcor", AsReporter(InfTopology.toInfXcor(_)))
-    primitiveManager.addPrimitive("to-inf-ycor", AsReporter(InfTopology.toInfYcor(_)))
-    primitiveManager.addPrimitive("to-inf-size", AsReporter(InfTopology.toInfSize(_)))
-    primitiveManager.addPrimitive("to-view-xcor", AsReporter(InfTopology.toViewXcor(_)))
-    primitiveManager.addPrimitive("to-view-ycor", AsReporter(InfTopology.toViewYcor(_)))
-    primitiveManager.addPrimitive("to-view-size", AsReporter(InfTopology.toViewSize(_)))
+    primitiveManager.addPrimitive("zoom", InfTopology.zoom)
+    primitiveManager.addPrimitive("center-xcor", centerXcor)
+    primitiveManager.addPrimitive("center-ycor", centerYcor)
+    primitiveManager.addPrimitive("to-inf-xcor", toInfXcor(_: Double))
+    primitiveManager.addPrimitive("to-inf-ycor", toInfYcor(_: Double))
+    primitiveManager.addPrimitive("to-inf-size", toInfSize(_: Double))
+    primitiveManager.addPrimitive("to-view-xcor",toViewXcor(_: Double))
+    primitiveManager.addPrimitive("to-view-ycor", toViewYcor(_: Double))
+    primitiveManager.addPrimitive("to-view-size", toViewSize(_: Double))
+    primitiveManager.addPrimitive("xcor", xcors)
+    primitiveManager.addPrimitive("ycor", ycors)
+    primitiveManager.addPrimitive("size", sizes)
 
     primitiveManager.addPrimitive("set-zoom", InfTopology.SetZoom)
     primitiveManager.addPrimitive("set-center", InfTopology.SetCenter)
@@ -113,8 +118,8 @@ object InfTopology {
   }
 }
 
-object AsReporter {
-  def apply(getter: =>Double): Primitive = {
+object PrimitiveConverters {
+  implicit def double(getter: =>Double): Primitive = {
     object Getter extends DefaultReporter {
       override def report(args: Array[Argument], context: Context): AnyRef =
        getter: java.lang.Double
@@ -122,12 +127,21 @@ object AsReporter {
     Getter
   }
 
-  def apply(func: (Double) => Double): Primitive ={
+  implicit def doubleDouble(func: (Double) => Double): Primitive = {
     object FuncReporter extends DefaultReporter {
       override def getSyntax() = reporterSyntax(Array(NumberType), NumberType)
       override def report(args: Array[Argument], context: Context): AnyRef =
         func(args(0).getDoubleValue): java.lang.Double
     }
     FuncReporter
+  }
+
+  implicit def turtleDouble(func: (Turtle) => Double): Primitive = {
+    object TurtleReporter extends DefaultReporter {
+      override def getAgentClassString = "T"
+      override def report(args: Array[Argument], context: Context): AnyRef =
+        func(context.getAgent.asInstanceOf[Turtle]): java.lang.Double
+    }
+    TurtleReporter
   }
 }
