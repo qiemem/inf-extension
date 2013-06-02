@@ -33,6 +33,8 @@ class InfExtension extends DefaultClassManager {
     primitiveManager.addPrimitive("set-size", setSize(_: Turtle, _: Double))
     primitiveManager.addPrimitive("forward", forward(_: Turtle, _: Double))
     primitiveManager.addPrimitive("fd", forward(_: Turtle, _: Double))
+    primitiveManager.addPrimitive("distancexy", distanceXY(_: Turtle, _: Double, _: Double))
+    primitiveManager.addPrimitive("distance", distance(_: Turtle, _: Turtle))
   }
 }
 
@@ -118,6 +120,16 @@ object InfTopology {
     val t = turtle.asInstanceOf[agent.Turtle]
     setXY(t, t.dx() * dist + xcors(t), t.dy() * dist + ycors(t))
   }
+
+  def distanceXY(turtle: Turtle, x: Double, y: Double): Double = {
+    val dx = xcors(turtle) - x
+    val dy = xcors(turtle) - y
+    StrictMath.sqrt(dx * dx + dy * dy)
+  }
+
+  def distance(turtle: Turtle, other: Turtle): Double = {
+    distanceXY(turtle, xcors(other), ycors(other))
+  }
 }
 
 object PrimitiveConverters {
@@ -131,7 +143,7 @@ object PrimitiveConverters {
 
   implicit def reporterDoubleDouble(func: (Double) => Double): Reporter = {
     object FuncReporter extends DefaultReporter {
-      override def getSyntax() = reporterSyntax(Array(NumberType), NumberType)
+      override def getSyntax = reporterSyntax(Array(NumberType), NumberType)
       override def report(args: Array[Argument], context: Context): AnyRef =
         func(args(0).getDoubleValue): java.lang.Double
     }
@@ -146,6 +158,27 @@ object PrimitiveConverters {
     }
     TurtleReporter
   }
+
+  implicit def reporterTurtleTurtleDouble(func: (Turtle, Turtle) => Double): Reporter = {
+    object TurtleReporter extends DefaultReporter {
+      override def getAgentClassString = "T"
+      override def getSyntax = reporterSyntax(Array(TurtleType), NumberType)
+      override def report(args: Array[Argument], context: Context): AnyRef =
+        func(context.getAgent.asInstanceOf[Turtle], args(0).getAgent.asInstanceOf[Turtle]): java.lang.Double
+    }
+    TurtleReporter
+  }
+
+  implicit def reporterTurtleDoubleDoubleDouble(func: (Turtle, Double, Double) => Double): Reporter = {
+    object TurtleReporter extends DefaultReporter {
+      override def getSyntax = reporterSyntax(Array(NumberType, NumberType), NumberType)
+      override def getAgentClassString = "T"
+      override def report(args: Array[Argument], context: Context): AnyRef =
+        func(context.getAgent.asInstanceOf[Turtle], args(0).getDoubleValue, args(1).getDoubleValue): java.lang.Double
+    }
+    TurtleReporter
+  }
+
 
   implicit def commandWorldDouble(func: (World, Double) => Unit): Command ={
     object WorldCommand extends DefaultCommand {
@@ -168,6 +201,7 @@ object PrimitiveConverters {
   implicit def commandTurtleDouble(func: (Turtle, Double) => Unit): Command ={
     object TurtleCommand extends DefaultCommand {
       override def getAgentClassString = "T"
+      override def getSwitchesBoolean = true
       override def getSyntax = commandSyntax(Array(NumberType))
       override def perform(args: Array[Argument], context: Context) =
         func(context.getAgent.asInstanceOf[Turtle], args(0).getDoubleValue)
@@ -179,6 +213,7 @@ object PrimitiveConverters {
     object TurtleCommand extends DefaultCommand {
       override def getAgentClassString = "T"
       override def getSyntax = commandSyntax(Array(NumberType, NumberType))
+      override def getSwitchesBoolean = true
       override def perform(args: Array[Argument], context: Context) =
         func(context.getAgent.asInstanceOf[Turtle], args(0).getDoubleValue, args(1).getDoubleValue)
     }

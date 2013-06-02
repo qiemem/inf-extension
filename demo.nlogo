@@ -130,8 +130,8 @@ NIL
 
 BUTTON
 70
-212
-135
+210
+140
 245
 up
 inf:set-center inf:center-xcor (inf:center-ycor + 1 / inf:zoom)
@@ -147,8 +147,8 @@ NIL
 
 BUTTON
 70
-247
-135
+245
+140
 280
 down
 inf:set-center inf:center-xcor (inf:center-ycor - 1 / inf:zoom)
@@ -164,8 +164,8 @@ NIL
 
 BUTTON
 5
-247
-68
+245
+70
 280
 left
 inf:set-center (inf:center-xcor - 1 / inf:zoom) inf:center-ycor
@@ -181,7 +181,7 @@ NIL
 
 BUTTON
 140
-247
+245
 203
 280
 right
