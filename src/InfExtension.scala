@@ -6,9 +6,11 @@ import ScalaConversions._
 import org.nlogo.agent
 
 import scala.collection.mutable.WeakHashMap
+import scala.collection.JavaConverters._
 
 class InfExtension extends DefaultClassManager {
   def load(primitiveManager: PrimitiveManager) {
+    primitiveManager.addPrimitive("set-zoom", InfTopology.SetZoom)
     primitiveManager.addPrimitive("setxy", InfTopology.SetXY)
   }
 }
@@ -22,13 +24,14 @@ object InfTopology {
   // extension. Seth suggested using a WeakHashMap instead (weak so that the
   // the entries will be gced when the turtle dies).
   // https://groups.google.com/forum/?fromgroups#!topic/netlogo-devel/6if-otb2M_k
-  val xcors = new WeakHashMap[Turtle, Double]()
-  val ycors = new WeakHashMap[Turtle, Double]()
-  val sizes  = new WeakHashMap[Turtle, Double]()
+  val xcors = new WeakHashMap[Turtle, Double]() withDefaultValue 0.0
+  val ycors = new WeakHashMap[Turtle, Double]() withDefaultValue 0.0
+  val sizes = new WeakHashMap[Turtle, Double]() withDefaultValue 1.0
 
   def updateVisibility(turtle: agent.Turtle) = {
     val xcor = (xcors(turtle) - centerXcor) * zoom
     val ycor = (ycors(turtle) - centerYcor) * zoom
+    val size = sizes(turtle) * zoom
     val w = turtle.world
     val minXcor = w.minPxcor - 0.5
     val maxXcor = w.maxPxcor + 0.5
@@ -40,6 +43,7 @@ object InfTopology {
     } else {
       turtle hidden false
       turtle.xandycor(xcor, ycor)
+      turtle size size
     }
   }
 
@@ -47,7 +51,7 @@ object InfTopology {
     override def getSyntax =
       commandSyntax(Array(NumberType, NumberType))
 
-    override def getAgentClassString = "-T--"
+    override def getAgentClassString = "T"
     override def getSwitchesBoolean = true
 
     override def perform(args: Array[Argument], context: Context) = {
@@ -58,4 +62,17 @@ object InfTopology {
     }
   }
 
+  object SetZoom extends DefaultCommand {
+    override def getSyntax = commandSyntax(Array(NumberType))
+
+    override def perform(args: Array[Argument], context: Context) = {
+      val newZoom = args(0).getDoubleValue
+      if (zoom != newZoom) {
+        zoom = newZoom
+        context.getAgent.world.turtles.agents.asScala foreach { (a: Agent) =>
+          updateVisibility(a.asInstanceOf[agent.Turtle])
+        }
+      }
+    }
+  }
 }

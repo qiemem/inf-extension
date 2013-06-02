@@ -5,6 +5,10 @@ to setup
   crt 1000
 end
 
+to update-view
+  inf:set-zoom zoom
+end
+
 to test-setxy
   ask turtles [ inf:setxy random-normal 0 10 random-normal 0 10 ]
 end
@@ -37,9 +41,9 @@ ticks
 30.0
 
 BUTTON
-64
+20
 35
-130
+86
 68
 NIL
 setup
@@ -54,16 +58,48 @@ NIL
 1
 
 BUTTON
-62
-76
-178
-109
+19
+153
+135
+186
 setxy random
 inf:setxy random-normal 0 10 random-normal 0 10
 NIL
 1
 T
 TURTLE
+NIL
+NIL
+NIL
+NIL
+1
+
+SLIDER
+20
+93
+192
+126
+zoom
+zoom
+.01
+2
+1
+.01
+1
+NIL
+HORIZONTAL
+
+BUTTON
+96
+35
+204
+68
+NIL
+update-view
+T
+1
+T
+OBSERVER
 NIL
 NIL
 NIL
