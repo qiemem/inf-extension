@@ -59,9 +59,9 @@ NIL
 
 BUTTON
 19
-153
+255
 135
-186
+288
 setxy random
 inf:setxy random-normal 0 10 random-normal 0 10
 NIL
@@ -83,7 +83,7 @@ zoom
 zoom
 .01
 2
-1
+0.8
 .01
 1
 NIL
@@ -102,6 +102,74 @@ T
 OBSERVER
 NIL
 NIL
+NIL
+NIL
+1
+
+BUTTON
+70
+145
+135
+178
+up
+inf:set-center inf:center-xcor (inf:center-ycor + 1 / inf:zoom)
+NIL
+1
+T
+OBSERVER
+NIL
+W
+NIL
+NIL
+1
+
+BUTTON
+70
+180
+135
+213
+down
+inf:set-center inf:center-xcor (inf:center-ycor - 1 / inf:zoom)
+NIL
+1
+T
+OBSERVER
+NIL
+S
+NIL
+NIL
+1
+
+BUTTON
+5
+180
+68
+213
+left
+inf:set-center (inf:center-xcor - 1 / inf:zoom) inf:center-ycor
+NIL
+1
+T
+OBSERVER
+NIL
+A
+NIL
+NIL
+1
+
+BUTTON
+140
+180
+203
+213
+right
+inf:set-center (inf:center-xcor + 1 / inf:zoom) inf:center-ycor
+NIL
+1
+T
+OBSERVER
+NIL
+D
 NIL
 NIL
 1
@@ -467,5 +535,5 @@ Line -7500403 true 150 150 90 180
 Line -7500403 true 150 150 210 180
 
 @#$#@#$#@
-0
+1
 @#$#@#$#@

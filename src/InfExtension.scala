@@ -11,6 +11,10 @@ import scala.collection.JavaConverters._
 class InfExtension extends DefaultClassManager {
   def load(primitiveManager: PrimitiveManager) {
     primitiveManager.addPrimitive("set-zoom", InfTopology.SetZoom)
+    primitiveManager.addPrimitive("set-center", InfTopology.SetCenter)
+    primitiveManager.addPrimitive("zoom", InfTopology.Zoom)
+    primitiveManager.addPrimitive("center-xcor", InfTopology.CenterXcor)
+    primitiveManager.addPrimitive("center-ycor", InfTopology.CenterYcor)
     primitiveManager.addPrimitive("setxy", InfTopology.SetXY)
   }
 }
@@ -47,6 +51,50 @@ object InfTopology {
     }
   }
 
+  def updateVisibility(world: World): Unit =
+    world.turtles.agents.asScala foreach { (a: Agent) =>
+      updateVisibility(a.asInstanceOf[agent.Turtle])
+    }
+
+  object Zoom extends DefaultReporter {
+    override def report(args: Array[Argument], context: Context): AnyRef =
+      zoom: java.lang.Double
+  }
+  object CenterXcor extends DefaultReporter {
+    override def report(args: Array[Argument], context: Context): AnyRef =
+      centerXcor: java.lang.Double
+  }
+  object CenterYcor extends DefaultReporter {
+    override def report(args: Array[Argument], context: Context): AnyRef =
+      centerYcor: java.lang.Double
+  }
+
+  object SetZoom extends DefaultCommand {
+    override def getSyntax = commandSyntax(Array(NumberType))
+
+    override def perform(args: Array[Argument], context: Context) = {
+      val newZoom = args(0).getDoubleValue
+      if (zoom != newZoom) {
+        zoom = newZoom
+        updateVisibility(context.getAgent.world)
+      }
+    }
+  }
+
+  object SetCenter extends DefaultCommand {
+    override def getSyntax = commandSyntax(Array(NumberType, NumberType))
+
+    override def perform(args: Array[Argument], context: Context) = {
+      val centerX = args(0).getDoubleValue
+      val centerY = args(1).getDoubleValue
+      if (centerX != centerXcor || centerY != centerYcor) {
+        centerXcor = centerX
+        centerYcor = centerY
+        updateVisibility(context.getAgent.world)
+      }
+    }
+  }
+
   object SetXY extends Command {
     override def getSyntax =
       commandSyntax(Array(NumberType, NumberType))
@@ -59,20 +107,6 @@ object InfTopology {
       xcors(turtle) = args(0).getDoubleValue
       ycors(turtle) = args(1).getDoubleValue
       updateVisibility(turtle)
-    }
-  }
-
-  object SetZoom extends DefaultCommand {
-    override def getSyntax = commandSyntax(Array(NumberType))
-
-    override def perform(args: Array[Argument], context: Context) = {
-      val newZoom = args(0).getDoubleValue
-      if (zoom != newZoom) {
-        zoom = newZoom
-        context.getAgent.world.turtles.agents.asScala foreach { (a: Agent) =>
-          updateVisibility(a.asInstanceOf[agent.Turtle])
-        }
-      }
     }
   }
 }
