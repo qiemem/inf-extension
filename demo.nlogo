@@ -4,7 +4,7 @@ globals [ pan-center-x pan-center-y pan-mouse-x pan-mouse-y ]
 
 to setup
   ca
-  crt 1000
+  crt 100
 end
 
 to update-view
@@ -82,9 +82,9 @@ NIL
 BUTTON
 40
 300
-156
+170
 333
-setxy random
+inf:setxy random
 inf:setxy random-normal 0 10 random-normal 0 10
 NIL
 1
@@ -237,11 +237,28 @@ inf:to-inf-ycor mouse-ycor
 
 BUTTON
 40
-340
-155
-373
+335
+170
+368
 NIL
 inf:fd .01
+T
+1
+T
+TURTLE
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+40
+370
+170
+403
+inf:face mouse
+inf:facexy (inf:to-inf-xcor mouse-xcor) (inf:to-inf-ycor mouse-ycor)
 T
 1
 T

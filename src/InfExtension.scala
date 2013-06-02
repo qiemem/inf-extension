@@ -35,6 +35,10 @@ class InfExtension extends DefaultClassManager {
     primitiveManager.addPrimitive("fd", forward(_: Turtle, _: Double))
     primitiveManager.addPrimitive("distancexy", distanceXY(_: Turtle, _: Double, _: Double))
     primitiveManager.addPrimitive("distance", distance(_: Turtle, _: Turtle))
+    primitiveManager.addPrimitive("towardsxy", towardsXY(_: Turtle, _: Double, _: Double))
+    primitiveManager.addPrimitive("towards", towards(_: Turtle, _: Turtle))
+    primitiveManager.addPrimitive("facexy", faceXY(_: Turtle, _: Double, _: Double))
+    primitiveManager.addPrimitive("face", face(_: Turtle, _: Turtle))
   }
 }
 
@@ -122,14 +126,29 @@ object InfTopology {
   }
 
   def distanceXY(turtle: Turtle, x: Double, y: Double): Double = {
-    val dx = xcors(turtle) - x
-    val dy = xcors(turtle) - y
+    val dx = x - xcors(turtle)
+    val dy = y - ycors(turtle)
     StrictMath.sqrt(dx * dx + dy * dy)
   }
 
-  def distance(turtle: Turtle, other: Turtle): Double = {
+  def distance(turtle: Turtle, other: Turtle): Double =
     distanceXY(turtle, xcors(other), ycors(other))
+
+  def towardsXY(turtle: Turtle, x: Double, y: Double): Double = {
+    val dx = x - xcors(turtle)
+    val dy = y - ycors(turtle)
+    // See org.nlogo.agent.Protractor#towards(double, double, double, double, boolean)
+    (270 + StrictMath.toDegrees(StrictMath.PI + StrictMath.atan2(-dy, dx))) % 360
   }
+
+  def towards(turtle: Turtle, other: Turtle): Double =
+    towardsXY(turtle, xcors(other), ycors(other))
+
+  def faceXY(turtle: Turtle, x: Double, y: Double) =
+    turtle heading towardsXY(turtle, x, y)
+
+  def face(turtle: Turtle, other: Turtle) =
+    turtle heading towards(turtle, other)
 }
 
 object PrimitiveConverters {
@@ -205,6 +224,17 @@ object PrimitiveConverters {
       override def getSyntax = commandSyntax(Array(NumberType))
       override def perform(args: Array[Argument], context: Context) =
         func(context.getAgent.asInstanceOf[Turtle], args(0).getDoubleValue)
+    }
+    TurtleCommand
+  }
+
+  implicit def commandTurtleTurtle(func: (Turtle, Turtle) => Unit): Command ={
+    object TurtleCommand extends DefaultCommand {
+      override def getAgentClassString = "T"
+      override def getSwitchesBoolean = true
+      override def getSyntax = commandSyntax(Array(TurtleType))
+      override def perform(args: Array[Argument], context: Context) =
+        func(context.getAgent.asInstanceOf[Turtle], args(0).getAgent.asInstanceOf[Turtle])
     }
     TurtleCommand
   }
