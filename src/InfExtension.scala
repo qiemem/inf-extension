@@ -10,11 +10,18 @@ import scala.collection.JavaConverters._
 
 class InfExtension extends DefaultClassManager {
   def load(primitiveManager: PrimitiveManager) {
+    primitiveManager.addPrimitive("zoom", AsReporter(InfTopology.zoom))
+    primitiveManager.addPrimitive("center-xcor", AsReporter(InfTopology.centerXcor))
+    primitiveManager.addPrimitive("center-ycor", AsReporter(InfTopology.centerYcor))
+    primitiveManager.addPrimitive("to-inf-xcor", AsReporter(InfTopology.toInfXcor(_)))
+    primitiveManager.addPrimitive("to-inf-ycor", AsReporter(InfTopology.toInfYcor(_)))
+    primitiveManager.addPrimitive("to-inf-size", AsReporter(InfTopology.toInfSize(_)))
+    primitiveManager.addPrimitive("to-view-xcor", AsReporter(InfTopology.toViewXcor(_)))
+    primitiveManager.addPrimitive("to-view-ycor", AsReporter(InfTopology.toViewYcor(_)))
+    primitiveManager.addPrimitive("to-view-size", AsReporter(InfTopology.toViewSize(_)))
+
     primitiveManager.addPrimitive("set-zoom", InfTopology.SetZoom)
     primitiveManager.addPrimitive("set-center", InfTopology.SetCenter)
-    primitiveManager.addPrimitive("zoom", InfTopology.Zoom)
-    primitiveManager.addPrimitive("center-xcor", InfTopology.CenterXcor)
-    primitiveManager.addPrimitive("center-ycor", InfTopology.CenterYcor)
     primitiveManager.addPrimitive("setxy", InfTopology.SetXY)
   }
 }
@@ -64,19 +71,6 @@ object InfTopology {
   def toViewYcor(infYcor: Double): Double = (infYcor - centerYcor) * zoom
   def toViewSize(infSize: Double): Double = infSize * zoom
 
-  object Zoom extends DefaultReporter {
-    override def report(args: Array[Argument], context: Context): AnyRef =
-      zoom: java.lang.Double
-  }
-  object CenterXcor extends DefaultReporter {
-    override def report(args: Array[Argument], context: Context): AnyRef =
-      centerXcor: java.lang.Double
-  }
-  object CenterYcor extends DefaultReporter {
-    override def report(args: Array[Argument], context: Context): AnyRef =
-      centerYcor: java.lang.Double
-  }
-
   object SetZoom extends DefaultCommand {
     override def getSyntax = commandSyntax(Array(NumberType))
 
@@ -116,5 +110,24 @@ object InfTopology {
       ycors(turtle) = args(1).getDoubleValue
       updateVisibility(turtle)
     }
+  }
+}
+
+object AsReporter {
+  def apply(getter: =>Double): Primitive = {
+    object Getter extends DefaultReporter {
+      override def report(args: Array[Argument], context: Context): AnyRef =
+       getter: java.lang.Double
+    }
+    Getter
+  }
+
+  def apply(func: (Double) => Double): Primitive ={
+    object FuncReporter extends DefaultReporter {
+      override def getSyntax() = reporterSyntax(Array(NumberType), NumberType)
+      override def report(args: Array[Argument], context: Context): AnyRef =
+        func(args(0).getDoubleValue): java.lang.Double
+    }
+    FuncReporter
   }
 }

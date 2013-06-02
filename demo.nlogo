@@ -1,5 +1,7 @@
 extensions [inf]
 
+globals [ pan-center-x pan-center-y pan-mouse-x pan-mouse-y ]
+
 to setup
   ca
   crt 1000
@@ -7,6 +9,26 @@ end
 
 to update-view
   inf:set-zoom zoom
+end
+
+to mouse-pan
+  ifelse mouse-down? [
+    ifelse is-number? pan-mouse-x and is-number? pan-mouse-y [
+      let delta-x inf:to-inf-size (pan-mouse-x - mouse-xcor)
+      let delta-y inf:to-inf-size (pan-mouse-y - mouse-ycor)
+      inf:set-center (pan-center-x + delta-x) (pan-center-y + delta-y)
+    ] [
+      set pan-center-x inf:center-xcor
+      set pan-center-y inf:center-ycor
+      set pan-mouse-x mouse-xcor
+      set pan-mouse-y mouse-ycor
+    ]
+  ] [
+    set pan-center-x false
+    set pan-center-y false
+    set pan-mouse-x false
+    set pan-mouse-y false
+  ]
 end
 
 to test-setxy
@@ -58,10 +80,10 @@ NIL
 1
 
 BUTTON
-19
-255
-135
-288
+40
+300
+156
+333
 setxy random
 inf:setxy random-normal 0 10 random-normal 0 10
 NIL
@@ -76,9 +98,9 @@ NIL
 
 SLIDER
 20
-93
+160
 192
-126
+193
 zoom
 zoom
 .01
@@ -108,9 +130,9 @@ NIL
 
 BUTTON
 70
-145
+212
 135
-178
+245
 up
 inf:set-center inf:center-xcor (inf:center-ycor + 1 / inf:zoom)
 NIL
@@ -125,9 +147,9 @@ NIL
 
 BUTTON
 70
-180
+247
 135
-213
+280
 down
 inf:set-center inf:center-xcor (inf:center-ycor - 1 / inf:zoom)
 NIL
@@ -142,9 +164,9 @@ NIL
 
 BUTTON
 5
-180
+247
 68
-213
+280
 left
 inf:set-center (inf:center-xcor - 1 / inf:zoom) inf:center-ycor
 NIL
@@ -159,9 +181,9 @@ NIL
 
 BUTTON
 140
-180
+247
 203
-213
+280
 right
 inf:set-center (inf:center-xcor + 1 / inf:zoom) inf:center-ycor
 NIL
@@ -173,6 +195,45 @@ D
 NIL
 NIL
 1
+
+BUTTON
+65
+95
+167
+128
+NIL
+mouse-pan
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+MONITOR
+20
+340
+202
+385
+NIL
+inf:to-inf-xcor mouse-xcor
+5
+1
+11
+
+MONITOR
+20
+390
+202
+435
+NIL
+inf:to-inf-ycor mouse-ycor
+5
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
