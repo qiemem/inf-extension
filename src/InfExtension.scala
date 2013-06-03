@@ -244,101 +244,71 @@ object InfTopology {
 }
 
 object PrimitiveConverters {
-  implicit def reporterDouble(getter: =>Double): Reporter = {
-    object Getter extends DefaultReporter {
-      override def report(args: Array[Argument], context: Context): AnyRef =
-       getter: java.lang.Double
-    }
-    Getter
+  implicit def reporterDouble(getter: => Double): Reporter = new DefaultReporter {
+    override def report(args: Array[Argument], context: Context): AnyRef =
+      getter: java.lang.Double
   }
 
-  implicit def reporterDoubleDouble(func: (Double) => Double): Reporter = {
-    object FuncReporter extends DefaultReporter {
-      override def getSyntax = reporterSyntax(Array(NumberType), NumberType)
-      override def report(args: Array[Argument], context: Context): AnyRef =
-        func(args(0).getDoubleValue): java.lang.Double
-    }
-    FuncReporter
+  implicit def reporterDoubleDouble(func: (Double) => Double): Reporter = new DefaultReporter {
+    override def getSyntax = reporterSyntax(Array(NumberType), NumberType)
+    override def report(args: Array[Argument], context: Context): AnyRef =
+      func(args(0).getDoubleValue): java.lang.Double
   }
 
-  implicit def reporterTurtleDouble(func: (Turtle) => Double): Reporter = {
-    object TurtleReporter extends DefaultReporter {
-      override def getAgentClassString = "T"
-      override def report(args: Array[Argument], context: Context): AnyRef =
-        func(context.getAgent.asInstanceOf[Turtle]): java.lang.Double
-    }
-    TurtleReporter
+  implicit def reporterTurtleDouble(func: (Turtle) => Double): Reporter = new DefaultReporter {
+    override def getAgentClassString = "T"
+    override def report(args: Array[Argument], context: Context): AnyRef =
+      func(context.getAgent.asInstanceOf[Turtle]): java.lang.Double
   }
 
-  implicit def reporterTurtleTurtleDouble(func: (Turtle, Turtle) => Double): Reporter = {
-    object TurtleReporter extends DefaultReporter {
-      override def getAgentClassString = "T"
-      override def getSyntax = reporterSyntax(Array(TurtleType), NumberType)
-      override def report(args: Array[Argument], context: Context): AnyRef =
-        func(context.getAgent.asInstanceOf[Turtle], args(0).getAgent.asInstanceOf[Turtle]): java.lang.Double
-    }
-    TurtleReporter
+  implicit def reporterTurtleTurtleDouble(func: (Turtle, Turtle) => Double): Reporter = new DefaultReporter {
+    override def getAgentClassString = "T"
+    override def getSyntax = reporterSyntax(Array(TurtleType), NumberType)
+    override def report(args: Array[Argument], context: Context): AnyRef =
+      func(context.getAgent.asInstanceOf[Turtle], args(0).getAgent.asInstanceOf[Turtle]): java.lang.Double
   }
 
-  implicit def reporterTurtleDoubleDoubleDouble(func: (Turtle, Double, Double) => Double): Reporter = {
-    object TurtleReporter extends DefaultReporter {
-      override def getSyntax = reporterSyntax(Array(NumberType, NumberType), NumberType)
-      override def getAgentClassString = "T"
-      override def report(args: Array[Argument], context: Context): AnyRef =
-        func(context.getAgent.asInstanceOf[Turtle], args(0).getDoubleValue, args(1).getDoubleValue): java.lang.Double
-    }
-    TurtleReporter
+  implicit def reporterTurtleDoubleDoubleDouble(func: (Turtle, Double, Double) => Double): Reporter = new DefaultReporter {
+    override def getSyntax = reporterSyntax(Array(NumberType, NumberType), NumberType)
+    override def getAgentClassString = "T"
+    override def report(args: Array[Argument], context: Context): AnyRef =
+      func(context.getAgent.asInstanceOf[Turtle], args(0).getDoubleValue, args(1).getDoubleValue) : java.lang.Double
   }
 
 
-  implicit def commandWorldDouble(func: (World, Double) => Unit): Command ={
-    object WorldCommand extends DefaultCommand {
-      override def getSyntax = commandSyntax(Array(NumberType))
-      override def perform(args: Array[Argument], context: Context) =
-        func(context.getAgent.world, args(0).getDoubleValue)
-    }
-    WorldCommand
+  implicit def commandWorldDouble(func: (World, Double) => Unit): Command = new DefaultCommand {
+    override def getSyntax = commandSyntax(Array(NumberType))
+    override def perform(args: Array[Argument], context: Context) =
+      func(context.getAgent.world, args(0).getDoubleValue)
   }
 
-  implicit def commandWorldDoubleDouble(func: (World, Double, Double) => Unit): Command ={
-    object WorldCommand extends DefaultCommand {
-      override def getSyntax = commandSyntax(Array(NumberType, NumberType))
-      override def perform(args: Array[Argument], context: Context) =
-        func(context.getAgent.world, args(0).getDoubleValue, args(1).getDoubleValue)
-    }
-    WorldCommand
+  implicit def commandWorldDoubleDouble(func: (World, Double, Double) => Unit): Command = new DefaultCommand {
+    override def getSyntax = commandSyntax(Array(NumberType, NumberType))
+    override def perform(args: Array[Argument], context: Context) =
+      func(context.getAgent.world, args(0).getDoubleValue, args(1).getDoubleValue)
   }
 
-  implicit def commandTurtleDouble(func: (Turtle, Double) => Unit): Command ={
-    object TurtleCommand extends DefaultCommand {
-      override def getAgentClassString = "T"
-      override def getSwitchesBoolean = true
-      override def getSyntax = commandSyntax(Array(NumberType))
-      override def perform(args: Array[Argument], context: Context) =
-        func(context.getAgent.asInstanceOf[Turtle], args(0).getDoubleValue)
-    }
-    TurtleCommand
+  implicit def commandTurtleDouble(func: (Turtle, Double) => Unit): Command = new DefaultCommand {
+    override def getAgentClassString = "T"
+    override def getSwitchesBoolean = true
+    override def getSyntax = commandSyntax(Array(NumberType))
+    override def perform(args: Array[Argument], context: Context) =
+      func(context.getAgent.asInstanceOf[Turtle], args(0).getDoubleValue)
   }
 
-  implicit def commandTurtleTurtle(func: (Turtle, Turtle) => Unit): Command ={
-    object TurtleCommand extends DefaultCommand {
-      override def getAgentClassString = "T"
-      override def getSwitchesBoolean = true
-      override def getSyntax = commandSyntax(Array(TurtleType))
-      override def perform(args: Array[Argument], context: Context) =
-        func(context.getAgent.asInstanceOf[Turtle], args(0).getAgent.asInstanceOf[Turtle])
-    }
-    TurtleCommand
+  implicit def commandTurtleTurtle(func: (Turtle, Turtle) => Unit): Command = new DefaultCommand {
+    override def getAgentClassString = "T"
+    override def getSwitchesBoolean = true
+    override def getSyntax = commandSyntax(Array(TurtleType))
+    override def perform(args: Array[Argument], context: Context) =
+      func(context.getAgent.asInstanceOf[Turtle], args(0).getAgent.asInstanceOf[Turtle])
   }
 
-  implicit def commandTurtleDoubleDouble(func: (Turtle, Double, Double) => Unit): Command ={
-    object TurtleCommand extends DefaultCommand {
-      override def getAgentClassString = "T"
-      override def getSyntax = commandSyntax(Array(NumberType, NumberType))
-      override def getSwitchesBoolean = true
-      override def perform(args: Array[Argument], context: Context) =
-        func(context.getAgent.asInstanceOf[Turtle], args(0).getDoubleValue, args(1).getDoubleValue)
-    }
-    TurtleCommand
+  implicit def commandTurtleDoubleDouble(func: (Turtle, Double, Double) => Unit): Command = new DefaultCommand {
+    override def getAgentClassString = "T"
+    override def getSyntax = commandSyntax(Array(NumberType, NumberType))
+    override def getSwitchesBoolean = true
+    override def perform(args: Array[Argument], context: Context) =
+      func(context.getAgent.asInstanceOf[Turtle], args(0).getDoubleValue, args(1).getDoubleValue)
   }
 }
