@@ -10,11 +10,11 @@ import scala.ref.WeakReference
 import scala.collection.JavaConverters._
 
 class InfExtension extends DefaultClassManager {
-  import InfTopology._
-  import PrimitiveConverters._
   def load(primitiveManager: PrimitiveManager) {
+    import InfTopology._
+    import PrimitiveConverters._
     // Global reporters
-    primitiveManager.addPrimitive("zoom", InfTopology.zoom)
+    primitiveManager.addPrimitive("zoom", zoom)
     primitiveManager.addPrimitive("center-xcor", centerXcor)
     primitiveManager.addPrimitive("center-ycor", centerYcor)
     primitiveManager.addPrimitive("to-inf-xcor", toInfXcor(_: Double))
