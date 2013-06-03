@@ -14,7 +14,7 @@ artifactName := { (_, _, _) => "inf.jar" }
 packageOptions := Seq(
   Package.ManifestAttributes(
     ("Extension-Name", "inf"),
-    ("Class-Manager", "InfExtension"),
+    ("Class-Manager", "org.nlogo.extensions.inf.InfExtension"),
     ("NetLogo-Extension-API-Version", "5.0")))
 
 packageBin in Compile <<= (packageBin in Compile, baseDirectory, streams) map {
