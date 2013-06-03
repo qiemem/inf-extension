@@ -63,13 +63,15 @@ object InfTopology {
   val ycors = new WeakHashMap[Turtle, Double]() withDefaultValue 0.0
   val sizes = new WeakHashMap[Turtle, Double]() withDefaultValue 1.0
 
-  def updateVisibility(a: Agent): Unit = a match {
-    case t: agent.Turtle => updateVisibility(t)
-    // TODO: Probably want to handle links here I think
-    case _ => throw new UnsupportedOperationException("Only works on real turtles")
+  def updateVisibility(a: Agent) {
+    a match {
+      case t: agent.Turtle => updateVisibility(t)
+      // TODO: Probably want to handle links here I think
+      case _ => throw new UnsupportedOperationException("Only works on real turtles")
+    }
   }
 
-  def updateVisibility(turtle: agent.Turtle):Unit = {
+  def updateVisibility(turtle: agent.Turtle) {
     val xcor = toViewXcor(xcors(turtle))
     val ycor = toViewYcor(ycors(turtle))
     val size = toViewSize(sizes(turtle))
@@ -88,8 +90,9 @@ object InfTopology {
       }
     }
 
-  def updateVisibility(world: World): Unit =
+  def updateVisibility(world: World) {
     world.turtles.agents.asScala foreach { updateVisibility(_) }
+  }
 
   def toInfXcor(viewXcor: Double): Double = viewXcor / zoom + centerXcor
   def toInfYcor(viewYcor: Double): Double = viewYcor / zoom + centerYcor
@@ -98,43 +101,49 @@ object InfTopology {
   def toViewYcor(infYcor: Double): Double = (infYcor - centerYcor) * zoom
   def toViewSize(infSize: Double): Double = infSize * zoom
 
-  def setZoom(w: World, z: Double) = if (z != zoom) {
-    zoom = z
-    updateVisibility(w)
+  def setZoom(w: World, z: Double) {
+     if (z != zoom) {
+      zoom = z
+      updateVisibility(w)
+    }
   }
 
-  def setCenter(w: World, x: Double, y: Double) = if (x != centerXcor || y != centerYcor) {
-    centerXcor = x
-    centerYcor = y
-    updateVisibility(w)
+  def setCenter(w: World, x: Double, y: Double) {
+    if (x != centerXcor || y != centerYcor) {
+      centerXcor = x
+      centerYcor = y
+      updateVisibility(w)
+    }
   }
 
-  def setXY(t: Turtle, x: Double, y: Double) = {
+  def setXY(t: Turtle, x: Double, y: Double) {
     xcors(t) = x
     ycors(t) = y
     updateVisibility(t)
   }
 
-  def setXcor(t: Turtle, x: Double) = {
+  def setXcor(t: Turtle, x: Double) {
     xcors(t) = x
     updateVisibility(t)
   }
 
-  def setYcor(t: Turtle, y: Double) = {
+  def setYcor(t: Turtle, y: Double) {
     ycors(t) = y
     updateVisibility(t)
   }
 
-  def setSize(t: Turtle, s: Double) = {
+  def setSize(t: Turtle, s: Double) {
     sizes(t) = s
     updateVisibility(t)
   }
 
-  def forward(turtle: Turtle, dist: Double) = turtle match {
-    case t: agent.Turtle => setXY(t, t.dx() * dist + xcors(t), t.dy() * dist + ycors(t))
+  def forward(turtle: Turtle, dist: Double) {
+    turtle match {
+      case t: agent.Turtle => setXY(t, t.dx() * dist + xcors(t), t.dy() * dist + ycors(t))
 
-    // I could actually handle this, but it would be messy and unecessary I think
-    case _ => throw new UnsupportedOperationException("Need real turtle here")
+      // I could actually handle this, but it would be messy and unecessary I think
+      case _ => throw new UnsupportedOperationException("Need real turtle here")
+    }
   }
 
   def distanceXY(turtle: Turtle, x: Double, y: Double): Double = {
@@ -156,11 +165,13 @@ object InfTopology {
   def towards(turtle: Turtle, other: Turtle): Double =
     towardsXY(turtle, xcors(other), ycors(other))
 
-  def faceXY(turtle: Turtle, x: Double, y: Double) =
+  def faceXY(turtle: Turtle, x: Double, y: Double) {
     turtle heading towardsXY(turtle, x, y)
+  }
 
-  def face(turtle: Turtle, other: Turtle) =
+  def face(turtle: Turtle, other: Turtle) {
     turtle heading towards(turtle, other)
+  }
 
 
   object QuadTree {
