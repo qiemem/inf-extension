@@ -63,12 +63,9 @@ object InfTopology {
   val ycors = new WeakHashMap[Turtle, Double]() withDefaultValue 0.0
   val sizes = new WeakHashMap[Turtle, Double]() withDefaultValue 1.0
 
-  def updateVisibility(a: Agent) {
-    a match {
-      case t: agent.Turtle => updateVisibility(t)
-      // TODO: Probably want to handle links here I think
-      case _ => throw new UnsupportedOperationException("Only works on real turtles")
-    }
+  def ensureTurtleAgent(turtle: Turtle) = turtle match {
+    case t: agent.Turtle => t
+    case _ => throw new ExtensionException("Invalid turtle found: " + turtle.toString)
   }
 
   def updateVisibility(turtle: agent.Turtle) {
@@ -91,7 +88,9 @@ object InfTopology {
     }
 
   def updateVisibility(world: World) {
-    world.turtles.agents.asScala foreach { updateVisibility(_) }
+    world.turtles.agents.asScala foreach {
+      case t: agent.Turtle => updateVisibility(_: agent.Turtle)
+    }
   }
 
   def toInfXcor(viewXcor: Double): Double = viewXcor / zoom + centerXcor
@@ -119,31 +118,27 @@ object InfTopology {
   def setXY(t: Turtle, x: Double, y: Double) {
     xcors(t) = x
     ycors(t) = y
-    updateVisibility(t)
+    updateVisibility(ensureTurtleAgent(t))
   }
 
   def setXcor(t: Turtle, x: Double) {
     xcors(t) = x
-    updateVisibility(t)
+    updateVisibility(ensureTurtleAgent(t))
   }
 
   def setYcor(t: Turtle, y: Double) {
     ycors(t) = y
-    updateVisibility(t)
+    updateVisibility(ensureTurtleAgent(t))
   }
 
   def setSize(t: Turtle, s: Double) {
     sizes(t) = s
-    updateVisibility(t)
+    updateVisibility(ensureTurtleAgent(t))
   }
 
   def forward(turtle: Turtle, dist: Double) {
-    turtle match {
-      case t: agent.Turtle => setXY(t, t.dx() * dist + xcors(t), t.dy() * dist + ycors(t))
-
-      // I could actually handle this, but it would be messy and unecessary I think
-      case _ => throw new UnsupportedOperationException("Need real turtle here")
-    }
+    val t = ensureTurtleAgent(turtle)
+    setXY(t, t.dx() * dist + xcors(t), t.dy() * dist + ycors(t))
   }
 
   def distanceXY(turtle: Turtle, x: Double, y: Double): Double = {
