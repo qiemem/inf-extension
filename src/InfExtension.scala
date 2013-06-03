@@ -17,12 +17,12 @@ class InfExtension extends DefaultClassManager {
     primitiveManager.addPrimitive("zoom", zoom)
     primitiveManager.addPrimitive("center-xcor", centerXcor)
     primitiveManager.addPrimitive("center-ycor", centerYcor)
-    primitiveManager.addPrimitive("to-inf-xcor", toInfXcor(_: Double))
-    primitiveManager.addPrimitive("to-inf-ycor", toInfYcor(_: Double))
-    primitiveManager.addPrimitive("to-inf-size", toInfSize(_: Double))
-    primitiveManager.addPrimitive("to-view-xcor", toViewXcor(_: Double))
-    primitiveManager.addPrimitive("to-view-ycor", toViewYcor(_: Double))
-    primitiveManager.addPrimitive("to-view-size", toViewSize(_: Double))
+    primitiveManager.addPrimitive("to-inf-xcor", toInfXcor _)
+    primitiveManager.addPrimitive("to-inf-ycor", toInfYcor _)
+    primitiveManager.addPrimitive("to-inf-size", toInfSize _)
+    primitiveManager.addPrimitive("to-view-xcor", toViewXcor _)
+    primitiveManager.addPrimitive("to-view-ycor", toViewYcor _)
+    primitiveManager.addPrimitive("to-view-size", toViewSize _)
 
     // Global commands
     primitiveManager.addPrimitive("set-zoom", setZoom(_: World, _: Double))
