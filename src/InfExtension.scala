@@ -49,6 +49,7 @@ class InfExtension extends DefaultClassManager {
   }
 }
 
+@annotation.strictfp
 object InfTopology {
   var zoom = 1.0
   var centerXcor = 0.0
@@ -62,31 +63,33 @@ object InfTopology {
   val ycors = new WeakHashMap[Turtle, Double]() withDefaultValue 0.0
   val sizes = new WeakHashMap[Turtle, Double]() withDefaultValue 1.0
 
-  def updateVisibility(turtle: Turtle) = {
-    val t = turtle.asInstanceOf[agent.Turtle]
-    val xcor = toViewXcor(xcors(t))
-    val ycor = toViewYcor(ycors(t))
-    val size = toViewSize(sizes(t))
-    val w = t.world
+  def updateVisibility(a: Agent): Unit = a match {
+    case t: agent.Turtle => updateVisibility(t)
+    // TODO: Probably want to handle links here I think
+    case _ => throw new UnsupportedOperationException("Only works on real turtles")
+  }
+
+  def updateVisibility(turtle: agent.Turtle):Unit = {
+    val xcor = toViewXcor(xcors(turtle))
+    val ycor = toViewYcor(ycors(turtle))
+    val size = toViewSize(sizes(turtle))
+    val w = turtle.world
     val minXcor = w.minPxcor - 0.5
     val maxXcor = w.maxPxcor + 0.5
     val minYcor = w.minPycor - 0.5
     val maxYcor = w.maxPycor + 0.5
 
     if (xcor < minXcor || maxXcor < xcor || ycor < minYcor || maxYcor < ycor) {
-      t hidden true
-    } else {
-      t hidden false
-      t.xandycor(xcor, ycor)
-      t size size
+      turtle hidden true
+      } else {
+        turtle hidden false
+        turtle.xandycor(xcor, ycor)
+        turtle size size
+      }
     }
-  }
 
   def updateVisibility(world: World): Unit =
-    world.turtles.agents.asScala foreach { (a: Agent) =>
-      updateVisibility(a.asInstanceOf[agent.Turtle])
-    }
-
+    world.turtles.agents.asScala foreach { updateVisibility(_) }
 
   def toInfXcor(viewXcor: Double): Double = viewXcor / zoom + centerXcor
   def toInfYcor(viewYcor: Double): Double = viewYcor / zoom + centerYcor
@@ -127,9 +130,11 @@ object InfTopology {
     updateVisibility(t)
   }
 
-  def forward(turtle: Turtle, dist: Double) = {
-    val t = turtle.asInstanceOf[agent.Turtle]
-    setXY(t, t.dx() * dist + xcors(t), t.dy() * dist + ycors(t))
+  def forward(turtle: Turtle, dist: Double) = turtle match {
+    case t: agent.Turtle => setXY(t, t.dx() * dist + xcors(t), t.dy() * dist + ycors(t))
+
+    // I could actually handle this, but it would be messy and unecessary I think
+    case _ => throw new UnsupportedOperationException("Need real turtle here")
   }
 
   def distanceXY(turtle: Turtle, x: Double, y: Double): Double = {
@@ -159,7 +164,7 @@ object InfTopology {
 
 
   object QuadTree {
-    val MAX_TURTLES = 8;
+    val MaxTurtles = 8;
 
     def apply(turtles: Seq[Turtle]): QuadTree = {
       val xs   = turtles map xcors
@@ -168,13 +173,13 @@ object InfTopology {
       val minY = ys.min
       val maxX = xs.max
       val maxY = ys.max
-      val size = Seq(maxX - minX, maxY - minY).max / 2
+      val size = scala.math.max(maxX - minX, maxY - minY) / 2
       QuadTree(maxX - minX / 2, maxY - minY / 2, size, turtles)
     }
 
     def apply(x: Double, y: Double, size: Double, turtles: Seq[Turtle]): QuadTree = {
       // in case a bunch are on the same place
-      if ((turtles map { t: Turtle => (xcors(t), ycors(t)) }).toSet.size > MAX_TURTLES) {
+      if ((turtles map { t: Turtle => (xcors(t), ycors(t)) }).toSet.size > MaxTurtles) {
         val childSize = size / 2
         val (nwTurtles, neTurtles, swTurtles, seTurtles) = divide(x, y, turtles)
         val nw = QuadTree(x - childSize, y + childSize, childSize, nwTurtles)
@@ -244,6 +249,11 @@ object InfTopology {
 }
 
 object PrimitiveConverters {
+  def asTurtle(a: Agent): Turtle = a match {
+    case t: Turtle => t
+    case _ => throw new ExtensionException("Turtle required. You gave " + a.toString)
+  }
+
   implicit def reporterDouble(getter: => Double): Reporter = new DefaultReporter {
     override def report(args: Array[Argument], context: Context): AnyRef =
       getter: java.lang.Double
@@ -258,21 +268,21 @@ object PrimitiveConverters {
   implicit def reporterTurtleDouble(func: (Turtle) => Double): Reporter = new DefaultReporter {
     override def getAgentClassString = "T"
     override def report(args: Array[Argument], context: Context): AnyRef =
-      func(context.getAgent.asInstanceOf[Turtle]): java.lang.Double
+      func(asTurtle(context.getAgent)): java.lang.Double
   }
 
   implicit def reporterTurtleTurtleDouble(func: (Turtle, Turtle) => Double): Reporter = new DefaultReporter {
     override def getAgentClassString = "T"
     override def getSyntax = reporterSyntax(Array(TurtleType), NumberType)
     override def report(args: Array[Argument], context: Context): AnyRef =
-      func(context.getAgent.asInstanceOf[Turtle], args(0).getAgent.asInstanceOf[Turtle]): java.lang.Double
+      func(asTurtle(context.getAgent), asTurtle(args(0).getAgent)): java.lang.Double
   }
 
   implicit def reporterTurtleDoubleDoubleDouble(func: (Turtle, Double, Double) => Double): Reporter = new DefaultReporter {
     override def getSyntax = reporterSyntax(Array(NumberType, NumberType), NumberType)
     override def getAgentClassString = "T"
     override def report(args: Array[Argument], context: Context): AnyRef =
-      func(context.getAgent.asInstanceOf[Turtle], args(0).getDoubleValue, args(1).getDoubleValue) : java.lang.Double
+      func(asTurtle(context.getAgent), args(0).getDoubleValue, args(1).getDoubleValue) : java.lang.Double
   }
 
 
@@ -293,7 +303,7 @@ object PrimitiveConverters {
     override def getSwitchesBoolean = true
     override def getSyntax = commandSyntax(Array(NumberType))
     override def perform(args: Array[Argument], context: Context) =
-      func(context.getAgent.asInstanceOf[Turtle], args(0).getDoubleValue)
+      func(asTurtle(context.getAgent), args(0).getDoubleValue)
   }
 
   implicit def commandTurtleTurtle(func: (Turtle, Turtle) => Unit): Command = new DefaultCommand {
@@ -301,7 +311,7 @@ object PrimitiveConverters {
     override def getSwitchesBoolean = true
     override def getSyntax = commandSyntax(Array(TurtleType))
     override def perform(args: Array[Argument], context: Context) =
-      func(context.getAgent.asInstanceOf[Turtle], args(0).getAgent.asInstanceOf[Turtle])
+      func(asTurtle(context.getAgent), asTurtle(args(0).getAgent))
   }
 
   implicit def commandTurtleDoubleDouble(func: (Turtle, Double, Double) => Unit): Command = new DefaultCommand {
@@ -309,6 +319,6 @@ object PrimitiveConverters {
     override def getSyntax = commandSyntax(Array(NumberType, NumberType))
     override def getSwitchesBoolean = true
     override def perform(args: Array[Argument], context: Context) =
-      func(context.getAgent.asInstanceOf[Turtle], args(0).getDoubleValue, args(1).getDoubleValue)
+      func(asTurtle(context.getAgent), args(0).getDoubleValue, args(1).getDoubleValue)
   }
 }
