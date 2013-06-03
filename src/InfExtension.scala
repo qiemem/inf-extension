@@ -168,41 +168,44 @@ object InfTopology {
       val minY = ys.min
       val maxX = xs.max
       val maxY = ys.max
-      val size = Seq(maxX - minX, maxY - minY).max
-      QuadTree(minX, minY, size, turtles)
+      val size = Seq(maxX - minX, maxY - minY).max / 2
+      QuadTree(maxX - minX / 2, maxY - minY / 2, size, turtles)
     }
 
-    def apply(minX: Double, minY: Double, size: Double, turtles: Seq[Turtle]): QuadTree = {
+    def apply(x: Double, y: Double, size: Double, turtles: Seq[Turtle]): QuadTree = {
       if (turtles.length > MAX_TURTLES) {
         val childSize = size / 2
-        val centerX = minX + childSize
-        val centerY = minY + childSize
-        val nw = QuadTree(minX, centerY, childSize,
-          turtles filter { (t: Turtle) => xcors(t) <  centerX && ycors(t) >= centerY })
-        val ne = QuadTree(centerX, centerY, childSize,
-          turtles filter { (t: Turtle) => xcors(t) >= centerX && ycors(t) >= centerY })
-        val sw = QuadTree(minX, minY, childSize,
-          turtles filter { (t: Turtle) => xcors(t) <  centerX && ycors(t) <  centerY })
-        val se = QuadTree(centerX, minY, childSize,
-          turtles filter { (t: Turtle) => xcors(t) >= centerX && ycors(t) <  centerY })
+        val (nwTurtles, neTurtles, swTurtles, seTurtles) = divide(x, y, turtles)
+        val nw = QuadTree(x - childSize, y + childSize, childSize, nwTurtles)
+        val ne = QuadTree(x + childSize, y + childSize, childSize, neTurtles)
+        val sw = QuadTree(x - childSize, y - childSize, childSize, swTurtles)
+        val se = QuadTree(x + childSize, y - childSize, childSize, seTurtles)
         new QuadBranch(nw, ne, sw, se)
       } else {
-        new QuadLeaf(minX, minY, size, turtles map (new WeakReference(_)))
+        new QuadLeaf(x, y, size, turtles map (new WeakReference(_)))
       }
     }
+
+    def divide(x: Double, y: Double, turtles: Seq[Turtle]): (Seq[Turtle], Seq[Turtle], Seq[Turtle], Seq[Turtle]) = (
+        turtles filter { (t: Turtle) => xcors(t) <  x && ycors(t) >= y }
+      , turtles filter { (t: Turtle) => xcors(t) >= x && ycors(t) >= y }
+      , turtles filter { (t: Turtle) => xcors(t) <  x && ycors(t) <  y }
+      , turtles filter { (t: Turtle) => xcors(t) >= x && ycors(t) <  y }
+    )
+
   }
 
-  class QuadTree(val minX: Double, val minY: Double, val size: Double) {
+  class QuadTree(val x: Double, val y: Double, val size: Double) {
 
   }
 
   class QuadBranch(nw: QuadTree, ne: QuadTree, sw: QuadTree, se: QuadTree)
-      extends QuadTree(sw.minX, sw.minY, sw.size*2) {
+      extends QuadTree(sw.x, sw.y, sw.size*2) {
 
   }
 
-  class QuadLeaf(minX: Double, minY: Double, size: Double, turtles: Seq[WeakReference[Turtle]])
-      extends QuadTree(minX, minY, size) {
+  class QuadLeaf(x: Double, y: Double, size: Double, turtles: Seq[WeakReference[Turtle]])
+      extends QuadTree(x, y, size) {
 
 
   }
