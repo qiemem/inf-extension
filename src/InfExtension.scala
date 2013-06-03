@@ -183,7 +183,7 @@ object InfTopology {
         val se = QuadTree(x + childSize, y - childSize, childSize, seTurtles)
         new QuadBranch(nw, ne, sw, se)
       } else {
-        new QuadLeaf(x, y, size, turtles map (new WeakReference(_)))
+        new QuadLeaf(x, y, size, turtles map { new WeakReference(_) })
       }
     }
 
@@ -217,6 +217,9 @@ object InfTopology {
       minX <= x + r && x - r < maxX && minY <= y + r && y - r < maxY
 
     def inRadius(x: Double, y: Double, r: Double): TraversableOnce[Turtle]
+
+    def count: Int
+    def addAll(turtles: Seq[Turtle]): QuadTree
   }
 
   class QuadBranch(val nw: QuadTree, val ne: QuadTree, val sw: QuadTree, val se: QuadTree)
@@ -224,15 +227,42 @@ object InfTopology {
 
     val children = Seq(nw, ne, sw, ne)
 
+    def count: Int = (children map { _.count }).sum
     def inRadius(x: Double, y: Double, r: Double): TraversableOnce[Turtle] =
       children filter { _.possibleOverlap(x, y, r) } flatMap { _.inRadius(x, y, r) }
+
+    def addAll(turtles: Seq[Turtle]): QuadTree = {
+      if (turtles.isEmpty) {
+        this
+      } else {
+        val newChildren = children map {
+          c: QuadTree => c addAll (turtles filter { c contains _ })
+        }
+        if ((newChildren forall { _.isInstanceOf[QuadLeaf] }) && (newChildren map { _.count }).sum <= QuadTree.MAX_TURTLES)
+          new QuadLeaf(x, y, size, newChildren flatMap { _.asInstanceOf[QuadLeaf].turtles })
+        else
+          new QuadBranch(newChildren(0), newChildren(1), newChildren(2), newChildren(3))
+      }
+    }
+
   }
 
-  class QuadLeaf(x: Double, y: Double, size: Double, turtles: Seq[WeakReference[Turtle]])
+  class QuadLeaf(x: Double, y: Double, size: Double, val turtles: Seq[WeakReference[Turtle]])
       extends QuadTree(x, y, size) {
     def livingTurtles: Seq[Turtle] = (turtles map { _.get }).flatten
+
+    def count: Int = livingTurtles.length
+
     def inRadius(x: Double, y: Double, r: Double): TraversableOnce[Turtle] =
       livingTurtles filter { t: Turtle => distanceXY(t, x, y) < r }
+
+    def addAll(turtles: Seq[Turtle]): QuadTree = {
+      val curTurtles = livingTurtles
+      if (!turtles.isEmpty || curTurtles.length != turtles.length)
+        QuadTree(x, y, size, curTurtles ++ turtles)
+      else
+        this
+    }
   }
 
 }
