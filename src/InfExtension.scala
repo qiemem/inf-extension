@@ -6,6 +6,7 @@ import ScalaConversions._
 import org.nlogo.agent
 
 import scala.collection.mutable.WeakHashMap
+import scala.ref.WeakReference
 import scala.collection.JavaConverters._
 
 class InfExtension extends DefaultClassManager {
@@ -155,6 +156,57 @@ object InfTopology {
 
   def face(turtle: Turtle, other: Turtle) =
     turtle heading towards(turtle, other)
+
+
+  object QuadTree {
+    val MAX_TURTLES = 8;
+
+    def apply(turtles: Seq[Turtle]): QuadTree = {
+      val xs   = turtles map xcors
+      val ys   = turtles map ycors
+      val minX = xs.min
+      val minY = ys.min
+      val maxX = xs.max
+      val maxY = ys.max
+      val size = Seq(maxX - minX, maxY - minY).max
+      QuadTree(minX, minY, size, turtles)
+    }
+
+    def apply(minX: Double, minY: Double, size: Double, turtles: Seq[Turtle]): QuadTree = {
+      if (turtles.length > MAX_TURTLES) {
+        val childSize = size / 2
+        val centerX = minX + childSize
+        val centerY = minY + childSize
+        val nw = QuadTree(minX, centerY, childSize,
+          turtles filter { (t: Turtle) => xcors(t) <  centerX && ycors(t) >= centerY })
+        val ne = QuadTree(centerX, centerY, childSize,
+          turtles filter { (t: Turtle) => xcors(t) >= centerX && ycors(t) >= centerY })
+        val sw = QuadTree(minX, minY, childSize,
+          turtles filter { (t: Turtle) => xcors(t) <  centerX && ycors(t) <  centerY })
+        val se = QuadTree(centerX, minY, childSize,
+          turtles filter { (t: Turtle) => xcors(t) >= centerX && ycors(t) <  centerY })
+        new QuadBranch(nw, ne, sw, se)
+      } else {
+        new QuadLeaf(minX, minY, size, turtles map (new WeakReference(_)))
+      }
+    }
+  }
+
+  class QuadTree(val minX: Double, val minY: Double, val size: Double) {
+
+  }
+
+  class QuadBranch(nw: QuadTree, ne: QuadTree, sw: QuadTree, se: QuadTree)
+      extends QuadTree(sw.minX, sw.minY, sw.size*2) {
+
+  }
+
+  class QuadLeaf(minX: Double, minY: Double, size: Double, turtles: Seq[WeakReference[Turtle]])
+      extends QuadTree(minX, minY, size) {
+
+
+  }
+
 }
 
 object PrimitiveConverters {
