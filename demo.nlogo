@@ -4,7 +4,8 @@ globals [ pan-center-x pan-center-y pan-mouse-x pan-mouse-y ]
 
 to setup
   ca
-  crt 100
+  crt 100 [inf:setxy 0 0]
+  update-view
 end
 
 to update-view
@@ -29,6 +30,7 @@ to mouse-pan
     set pan-mouse-x false
     set pan-mouse-y false
   ]
+  update-view
 end
 
 to test-setxy
@@ -80,10 +82,10 @@ NIL
 1
 
 BUTTON
-40
-300
-170
-333
+45
+220
+175
+253
 inf:setxy random
 inf:setxy random-normal 0 10 random-normal 0 10
 NIL
@@ -97,10 +99,10 @@ NIL
 1
 
 SLIDER
-20
-160
-192
-193
+25
+80
+197
+113
 zoom
 zoom
 .01
@@ -112,27 +114,10 @@ NIL
 HORIZONTAL
 
 BUTTON
-96
-35
-204
-68
-NIL
-update-view
-T
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-BUTTON
-70
-210
-140
-245
+75
+130
+145
+165
 up
 inf:set-center inf:center-xcor (inf:center-ycor + 1 / inf:zoom)
 NIL
@@ -146,10 +131,10 @@ NIL
 1
 
 BUTTON
-70
-245
-140
-280
+75
+165
+145
+200
 down
 inf:set-center inf:center-xcor (inf:center-ycor - 1 / inf:zoom)
 NIL
@@ -163,10 +148,10 @@ NIL
 1
 
 BUTTON
-5
-245
-70
-280
+10
+165
+75
+200
 left
 inf:set-center (inf:center-xcor - 1 / inf:zoom) inf:center-ycor
 NIL
@@ -180,10 +165,10 @@ NIL
 1
 
 BUTTON
-140
-245
-203
-280
+145
+165
+208
+200
 right
 inf:set-center (inf:center-xcor + 1 / inf:zoom) inf:center-ycor
 NIL
@@ -197,10 +182,10 @@ NIL
 1
 
 BUTTON
-65
-95
-167
-128
+100
+35
+202
+68
 NIL
 mouse-pan
 T
@@ -214,10 +199,10 @@ NIL
 1
 
 MONITOR
-15
-425
-197
-470
+20
+345
+202
+390
 NIL
 inf:to-inf-xcor mouse-xcor
 5
@@ -225,10 +210,10 @@ inf:to-inf-xcor mouse-xcor
 11
 
 MONITOR
-15
-475
-197
-520
+20
+395
+202
+440
 NIL
 inf:to-inf-ycor mouse-ycor
 5
@@ -236,10 +221,10 @@ inf:to-inf-ycor mouse-ycor
 11
 
 BUTTON
-40
-335
-170
-368
+45
+255
+175
+288
 NIL
 inf:fd .01
 T
@@ -253,10 +238,10 @@ NIL
 1
 
 BUTTON
-40
-370
-170
-403
+45
+290
+175
+323
 inf:face mouse
 inf:facexy (inf:to-inf-xcor mouse-xcor) (inf:to-inf-ycor mouse-ycor)
 T
