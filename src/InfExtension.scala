@@ -219,7 +219,6 @@ object InfTopology {
     def inRadius(x: Double, y: Double, r: Double): TraversableOnce[Turtle]
 
     def count: Int
-    def addAll(turtles: Seq[Turtle]): QuadTree
   }
 
   class QuadBranch(val nw: QuadTree, val ne: QuadTree, val sw: QuadTree, val se: QuadTree)
@@ -230,21 +229,6 @@ object InfTopology {
     def count: Int = (children map { _.count }).sum
     def inRadius(x: Double, y: Double, r: Double): TraversableOnce[Turtle] =
       children filter { _.possibleOverlap(x, y, r) } flatMap { _.inRadius(x, y, r) }
-
-    def addAll(turtles: Seq[Turtle]): QuadTree = {
-      if (turtles.isEmpty) {
-        this
-      } else {
-        val newChildren = children map {
-          c: QuadTree => c addAll (turtles filter { c contains _ })
-        }
-        if ((newChildren forall { _.isInstanceOf[QuadLeaf] }) && (newChildren map { _.count }).sum <= QuadTree.MAX_TURTLES)
-          new QuadLeaf(x, y, size, newChildren flatMap { _.asInstanceOf[QuadLeaf].turtles })
-        else
-          new QuadBranch(newChildren(0), newChildren(1), newChildren(2), newChildren(3))
-      }
-    }
-
   }
 
   class QuadLeaf(x: Double, y: Double, size: Double, val turtles: Seq[WeakReference[Turtle]])
@@ -255,14 +239,6 @@ object InfTopology {
 
     def inRadius(x: Double, y: Double, r: Double): TraversableOnce[Turtle] =
       livingTurtles filter { t: Turtle => distanceXY(t, x, y) < r }
-
-    def addAll(turtles: Seq[Turtle]): QuadTree = {
-      val curTurtles = livingTurtles
-      if (!turtles.isEmpty || curTurtles.length != turtles.length)
-        QuadTree(x, y, size, curTurtles ++ turtles)
-      else
-        this
-    }
   }
 
 }
