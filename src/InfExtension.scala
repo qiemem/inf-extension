@@ -12,6 +12,7 @@ class InfExtension extends DefaultClassManager {
   import InfTopology._
   import PrimitiveConverters._
   def load(primitiveManager: PrimitiveManager) {
+    // Global reporters
     primitiveManager.addPrimitive("zoom", InfTopology.zoom)
     primitiveManager.addPrimitive("center-xcor", centerXcor)
     primitiveManager.addPrimitive("center-ycor", centerYcor)
@@ -21,22 +22,27 @@ class InfExtension extends DefaultClassManager {
     primitiveManager.addPrimitive("to-view-xcor", toViewXcor(_: Double))
     primitiveManager.addPrimitive("to-view-ycor", toViewYcor(_: Double))
     primitiveManager.addPrimitive("to-view-size", toViewSize(_: Double))
+
+    // Global commands
+    primitiveManager.addPrimitive("set-zoom", setZoom(_: World, _: Double))
+    primitiveManager.addPrimitive("set-center", setCenter(_: World, _: Double, _: Double))
+
+    // Turtle reporters
     primitiveManager.addPrimitive("xcor", xcors)
     primitiveManager.addPrimitive("ycor", ycors)
     primitiveManager.addPrimitive("size", sizes)
+    primitiveManager.addPrimitive("distancexy", distanceXY(_: Turtle, _: Double, _: Double))
+    primitiveManager.addPrimitive("distance", distance(_: Turtle, _: Turtle))
+    primitiveManager.addPrimitive("towardsxy", towardsXY(_: Turtle, _: Double, _: Double))
+    primitiveManager.addPrimitive("towards", towards(_: Turtle, _: Turtle))
 
-    primitiveManager.addPrimitive("set-zoom", setZoom(_: World, _: Double))
-    primitiveManager.addPrimitive("set-center", setCenter(_: World, _: Double, _: Double))
+    // Turtle commands
     primitiveManager.addPrimitive("setxy", setXY(_: Turtle, _: Double, _: Double))
     primitiveManager.addPrimitive("set-xcor", setXcor(_: Turtle, _: Double))
     primitiveManager.addPrimitive("set-ycor", setYcor(_: Turtle, _: Double))
     primitiveManager.addPrimitive("set-size", setSize(_: Turtle, _: Double))
     primitiveManager.addPrimitive("forward", forward(_: Turtle, _: Double))
     primitiveManager.addPrimitive("fd", forward(_: Turtle, _: Double))
-    primitiveManager.addPrimitive("distancexy", distanceXY(_: Turtle, _: Double, _: Double))
-    primitiveManager.addPrimitive("distance", distance(_: Turtle, _: Turtle))
-    primitiveManager.addPrimitive("towardsxy", towardsXY(_: Turtle, _: Double, _: Double))
-    primitiveManager.addPrimitive("towards", towards(_: Turtle, _: Turtle))
     primitiveManager.addPrimitive("facexy", faceXY(_: Turtle, _: Double, _: Double))
     primitiveManager.addPrimitive("face", face(_: Turtle, _: Turtle))
   }
