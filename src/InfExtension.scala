@@ -173,7 +173,8 @@ object InfTopology {
     }
 
     def apply(x: Double, y: Double, size: Double, turtles: Seq[Turtle]): QuadTree = {
-      if (turtles.length > MAX_TURTLES) {
+      // in case a bunch are on the same place
+      if ((turtles map { t: Turtle => (xcors(t), ycors(t)) }).toSet.size > MAX_TURTLES) {
         val childSize = size / 2
         val (nwTurtles, neTurtles, swTurtles, seTurtles) = divide(x, y, turtles)
         val nw = QuadTree(x - childSize, y + childSize, childSize, nwTurtles)
@@ -186,28 +187,52 @@ object InfTopology {
       }
     }
 
+    /**
+     * Divides the given turtles into four quadrants using (x,y) as the origin.
+     * @param x The x coordinate the turtles will be divided around
+     * @param y The y coordinate the turtles will be divided around
+     * @return (nw, ne, sw, se)
+     */
     def divide(x: Double, y: Double, turtles: Seq[Turtle]): (Seq[Turtle], Seq[Turtle], Seq[Turtle], Seq[Turtle]) = (
-        turtles filter { (t: Turtle) => xcors(t) <  x && ycors(t) >= y }
-      , turtles filter { (t: Turtle) => xcors(t) >= x && ycors(t) >= y }
-      , turtles filter { (t: Turtle) => xcors(t) <  x && ycors(t) <  y }
-      , turtles filter { (t: Turtle) => xcors(t) >= x && ycors(t) <  y }
+        turtles filter { t: Turtle => xcors(t) <  x && ycors(t) >= y }
+      , turtles filter { t: Turtle => xcors(t) >= x && ycors(t) >= y }
+      , turtles filter { t: Turtle => xcors(t) <  x && ycors(t) <  y }
+      , turtles filter { t: Turtle => xcors(t) >= x && ycors(t) <  y }
     )
 
   }
 
-  class QuadTree(val x: Double, val y: Double, val size: Double) {
+  abstract class QuadTree(val x: Double, val y: Double, val size: Double) {
+    def maxX = x + size   // exclusive
+    def minX = x - size   // inclusive
+    def maxY = y + size   // exclusive
+    def minY = y - size   // inclusive
 
+    def contains(turtle: Turtle): Boolean = contains(xcors(turtle), ycors(turtle))
+
+    def contains(x: Double, y: Double): Boolean =
+      minX <= x && x < maxX && minY <= y && y < maxY
+
+    def possibleOverlap(x: Double, y: Double, r: Double): Boolean =
+      minX <= x + r && x - r < maxX && minY <= y + r && y - r < maxY
+
+    def inRadius(x: Double, y: Double, r: Double): TraversableOnce[Turtle]
   }
 
-  class QuadBranch(nw: QuadTree, ne: QuadTree, sw: QuadTree, se: QuadTree)
+  class QuadBranch(val nw: QuadTree, val ne: QuadTree, val sw: QuadTree, val se: QuadTree)
       extends QuadTree(sw.x, sw.y, sw.size*2) {
 
+    val children = Seq(nw, ne, sw, ne)
+
+    def inRadius(x: Double, y: Double, r: Double): TraversableOnce[Turtle] =
+      children filter { _.possibleOverlap(x, y, r) } flatMap { _.inRadius(x, y, r) }
   }
 
   class QuadLeaf(x: Double, y: Double, size: Double, turtles: Seq[WeakReference[Turtle]])
       extends QuadTree(x, y, size) {
-
-
+    def livingTurtles: Seq[Turtle] = (turtles map { _.get }).flatten
+    def inRadius(x: Double, y: Double, r: Double): TraversableOnce[Turtle] =
+      livingTurtles filter { t: Turtle => distanceXY(t, x, y) < r }
   }
 
 }
