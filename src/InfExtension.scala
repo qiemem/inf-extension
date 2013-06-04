@@ -25,27 +25,27 @@ class InfExtension extends DefaultClassManager {
     primitiveManager.addPrimitive("to-view-size", toViewSize _)
 
     // Global commands
-    primitiveManager.addPrimitive("set-zoom", setZoom(_: World, _: Double))
-    primitiveManager.addPrimitive("set-center", setCenter(_: World, _: Double, _: Double))
+    primitiveManager.addPrimitive("set-zoom", setZoom _)
+    primitiveManager.addPrimitive("set-center", setCenter _)
 
     // Turtle reporters
     primitiveManager.addPrimitive("xcor", xcors)
     primitiveManager.addPrimitive("ycor", ycors)
     primitiveManager.addPrimitive("size", sizes)
-    primitiveManager.addPrimitive("distancexy", distanceXY(_: Turtle, _: Double, _: Double))
-    primitiveManager.addPrimitive("distance", distance(_: Turtle, _: Turtle))
-    primitiveManager.addPrimitive("towardsxy", towardsXY(_: Turtle, _: Double, _: Double))
-    primitiveManager.addPrimitive("towards", towards(_: Turtle, _: Turtle))
+    primitiveManager.addPrimitive("distancexy", distanceXY _)
+    primitiveManager.addPrimitive("distance", distance _)
+    primitiveManager.addPrimitive("towardsxy", towardsXY _)
+    primitiveManager.addPrimitive("towards", towards _)
 
     // Turtle commands
-    primitiveManager.addPrimitive("setxy", setXY(_: Turtle, _: Double, _: Double))
-    primitiveManager.addPrimitive("set-xcor", setXcor(_: Turtle, _: Double))
-    primitiveManager.addPrimitive("set-ycor", setYcor(_: Turtle, _: Double))
-    primitiveManager.addPrimitive("set-size", setSize(_: Turtle, _: Double))
-    primitiveManager.addPrimitive("forward", forward(_: Turtle, _: Double))
-    primitiveManager.addPrimitive("fd", forward(_: Turtle, _: Double))
-    primitiveManager.addPrimitive("facexy", faceXY(_: Turtle, _: Double, _: Double))
-    primitiveManager.addPrimitive("face", face(_: Turtle, _: Turtle))
+    primitiveManager.addPrimitive("setxy", setXY _)
+    primitiveManager.addPrimitive("set-xcor", setXcor _)
+    primitiveManager.addPrimitive("set-ycor", setYcor _)
+    primitiveManager.addPrimitive("set-size", setSize _)
+    primitiveManager.addPrimitive("forward", forward _)
+    primitiveManager.addPrimitive("fd", forward _)
+    primitiveManager.addPrimitive("facexy", faceXY _)
+    primitiveManager.addPrimitive("face", face _)
   }
 }
 
