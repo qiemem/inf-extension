@@ -71,6 +71,49 @@ setxy,xcor,ycor,sw
   [ inf:ycor ] of turtle 0 => -5.6
   [ hidden? ] of turtle 0 => true
 
+center,ne
+  extensions [inf]
+  O> crt 1 [inf:setxy 0 0 ]
+  O> inf:set-center -5.4 -5.4
+  [ inf:xcor ] of turtle 0 => 0
+  [ xcor ] of turtle 0 => 5.4
+  [ inf:ycor ] of turtle 0 => 0
+  [ ycor ] of turtle 0 => 5.4
+  [ hidden? ] of turtle 0 => false
+  O> inf:set-center -5.5 -5.4
+  [ inf:xcor ] of turtle 0 => 0
+  [ inf:ycor ] of turtle 0 => 0
+  [ hidden? ] of turtle 0 => true
+  O> inf:set-center -5.4 -5.5
+  [ inf:xcor ] of turtle 0 => 0
+  [ inf:ycor ] of turtle 0 => 0
+  [ hidden? ] of turtle 0 => true
+  O> inf:set-center -5.5 -5.5
+  [ inf:xcor ] of turtle 0 => 0
+  [ inf:ycor ] of turtle 0 => 0
+  [ hidden? ] of turtle 0 => true
+
+center,sw
+  extensions [inf]
+  O> crt 1 [inf:setxy 0 0]
+  O> inf:set-center 5.5 5.5
+  [ inf:xcor ] of turtle 0 => 0
+  [ xcor ] of turtle 0 => -5.5
+  [ inf:ycor ] of turtle 0 => 0
+  [ ycor ] of turtle 0 => -5.5
+  [ hidden? ] of turtle 0 => false
+  O> inf:set-center 5.6 5.5
+  [ inf:xcor ] of turtle 0 => 0
+  [ inf:ycor ] of turtle 0 => 0
+  [ hidden? ] of turtle 0 => true
+  O> inf:set-center 5.5 5.6
+  [ inf:xcor ] of turtle 0 => 0
+  [ inf:ycor ] of turtle 0 => 0
+  [ hidden? ] of turtle 0 => true
+  O> inf:set-center 5.6 -5.6
+  [ inf:xcor ] of turtle 0 => 0
+  [ inf:ycor ] of turtle 0 => 0
+  [ hidden? ] of turtle 0 => true
 
 zoom
   extensions [inf]
