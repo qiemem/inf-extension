@@ -174,3 +174,59 @@ inf:distance
   precision [inf:distance turtle 1] of turtle 0 3 => 7.211
   O> ask turtle 1 [inf:setxy 5 -105]
   [inf:distance turtle 1] of turtle 0 => 100
+
+inf:towardsxy
+  extensions [inf]
+  O> crt 1 [inf:setxy 0 0]
+  [inf:towardsxy 0 1] of turtle 0 => 0
+  [inf:towardsxy 1 1] of turtle 0  => 45
+  [inf:towardsxy 1 0] of turtle 0  => 90
+  [inf:towardsxy 1 -1] of turtle 0 => 135
+  [inf:towardsxy 0 -1] of turtle 0  => 180
+  [inf:towardsxy -1 -1] of turtle 0  => 225
+  [inf:towardsxy -1 0] of turtle 0  => 270
+  [inf:towardsxy -1 1] of turtle 0  => 315
+  [inf:towardsxy 0 100] of turtle 0 => 0
+  [inf:towardsxy 100 100] of turtle 0  => 45
+  [inf:towardsxy 100 0] of turtle 0  => 90
+  [inf:towardsxy 100 -100] of turtle 0 => 135
+  [inf:towardsxy 0 -100] of turtle 0  => 180
+  [inf:towardsxy -100 -100] of turtle 0  => 225
+  [inf:towardsxy -100 0] of turtle 0  => 270
+  [inf:towardsxy -100 100] of turtle 0  => 315
+
+inf:towards
+  extensions [inf]
+  O> crt 1 [inf:setxy 0 0] crt 1
+  O> ask turtle 1 [inf:setxy 0 1]
+  [inf:towards turtle 1] of turtle 0 => 0
+  O> ask turtle 1 [inf:setxy 1 1]
+  [inf:towards turtle 1] of turtle 0  => 45
+  O> ask turtle 1 [inf:setxy 1 0]
+  [inf:towards turtle 1] of turtle 0  => 90
+  O> ask turtle 1 [inf:setxy 1 -1]
+  [inf:towards turtle 1] of turtle 0 => 135
+  O> ask turtle 1 [inf:setxy 0 -1]
+  [inf:towards turtle 1] of turtle 0  => 180
+  O> ask turtle 1 [inf:setxy -1 -1]
+  [inf:towards turtle 1] of turtle 0  => 225
+  O> ask turtle 1 [inf:setxy -1 0]
+  [inf:towards turtle 1] of turtle 0  => 270
+  O> ask turtle 1 [inf:setxy -1 1]
+  [inf:towards turtle 1] of turtle 0  => 315
+  O> ask turtle 1 [inf:setxy 0 100]
+  [inf:towards turtle 1] of turtle 0 => 0
+  O> ask turtle 1 [inf:setxy 100 100]
+  [inf:towards turtle 1] of turtle 0  => 45
+  O> ask turtle 1 [inf:setxy 100 0]
+  [inf:towards turtle 1] of turtle 0  => 90
+  O> ask turtle 1 [inf:setxy 100 -100]
+  [inf:towards turtle 1] of turtle 0 => 135
+  O> ask turtle 1 [inf:setxy 0 -100]
+  [inf:towards turtle 1] of turtle 0  => 180
+  O> ask turtle 1 [inf:setxy -100 -100]
+  [inf:towards turtle 1] of turtle 0  => 225
+  O> ask turtle 1 [inf:setxy -100 0]
+  [inf:towards turtle 1] of turtle 0  => 270
+  O> ask turtle 1 [inf:setxy -100 100]
+  [inf:towards turtle 1] of turtle 0  => 315
