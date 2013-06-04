@@ -89,7 +89,7 @@ object InfTopology {
 
   def updateVisibility(world: World) {
     world.turtles.agents.asScala foreach {
-      case t: agent.Turtle => updateVisibility(_: agent.Turtle)
+      case t: agent.Turtle => updateVisibility(t)
     }
   }
 
