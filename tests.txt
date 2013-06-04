@@ -74,11 +74,24 @@ setxy,xcor,ycor,sw
 
 zoom
   extensions [inf]
-  O> crt 1 [ inf:setxy 1.5 2 ] inf:set-zoom 2
+  O> crt 1 [ inf:setxy 1 -2 ] inf:set-zoom 2
   [size] of turtle 0 => 2
-  [xcor] of turtle 0 => 3
-  [ycor] of turtle 0 => 4
+  [inf:size] of turtle 0 => 1
+  [xcor] of turtle 0 => 2
+  [inf:xcor] of turtle 0 => 1
+  [ycor] of turtle 0 => -4
+  [inf:ycor] of turtle 0 => -2
+  [hidden?] of turtle 0 => false
   O> inf:set-zoom .5
   [size] of turtle 0 => 0.5
-  [xcor] of turtle 0 => 0.75
-  [ycor] of turtle 0 => 1
+  [inf:size] of turtle 0 => 1
+  [xcor] of turtle 0 => 0.5
+  [inf:xcor] of turtle 0 => 1
+  [ycor] of turtle 0 => -1
+  [inf:ycor] of turtle 0 => -2
+  [hidden?] of turtle 0 => false
+  O> inf:set-zoom 3
+  [inf:size] of turtle 0 => 1
+  [inf:xcor] of turtle 0 => 1
+  [inf:ycor] of turtle 0 => -2
+  [hidden?] of turtle 0 => true
