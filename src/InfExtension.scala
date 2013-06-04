@@ -73,19 +73,19 @@ object InfTopology {
     val ycor = toViewYcor(ycors(turtle))
     val size = toViewSize(sizes(turtle))
     val w = turtle.world
-    val minXcor = w.minPxcor - 0.5
-    val maxXcor = w.maxPxcor + 0.5
-    val minYcor = w.minPycor - 0.5
-    val maxYcor = w.maxPycor + 0.5
+    val minXcor = w.minPxcor - 0.5  // inclusive
+    val maxXcor = w.maxPxcor + 0.5  // exclusive
+    val minYcor = w.minPycor - 0.5  // inclusive
+    val maxYcor = w.maxPycor + 0.5  // exclusive
 
-    if (xcor < minXcor || maxXcor < xcor || ycor < minYcor || maxYcor < ycor) {
+    if (xcor < minXcor || maxXcor <= xcor || ycor < minYcor || maxYcor <= ycor) {
       turtle hidden true
-      } else {
-        turtle hidden false
-        turtle.xandycor(xcor, ycor)
-        turtle size size
-      }
+    } else {
+      turtle hidden false
+      turtle.xandycor(xcor, ycor)
+      turtle size size
     }
+  }
 
   def updateVisibility(world: World) {
     world.turtles.agents.asScala foreach {

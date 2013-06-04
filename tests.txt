@@ -1,3 +1,77 @@
+xcor,ycor,setxy
+  extensions [inf]
+  O> crt 1
+  [ inf:xcor ] of turtle 0 => 0
+  [ xcor ] of turtle 0 => 0
+  [ inf:ycor ] of turtle 0 => 0
+  [ ycor ] of turtle 0 => 0
+  [ hidden? ] of turtle 0 => false
+  O> ask turtles [ inf:setxy 2 3 ]
+  [ inf:xcor ] of turtle 0 => 2
+  [ xcor ] of turtle 0 => 2
+  [ inf:ycor ] of turtle 0 => 3
+  [ ycor ] of turtle 0 => 3
+  [ hidden? ] of turtle 0 => false
+  O> ask turtles [ inf:setxy 10 20 ]
+  [ inf:xcor ] of turtle 0 => 10
+  [ inf:ycor ] of turtle 0 => 20
+  [ hidden? ] of turtle 0 => true
+  O> ask turtles [ inf:setxy -72 3 ]
+  [ inf:xcor ] of turtle 0 => -72
+  [ inf:ycor ] of turtle 0 => 3
+  [ hidden? ] of turtle 0 => true
+  O> ask turtles [ inf:setxy 0.003 -5.419 ]
+  [ inf:xcor ] of turtle 0 => 0.0030
+  [ xcor ] of turtle 0 => 0.0030
+  [ inf:ycor ] of turtle 0 => -5.419
+  [ ycor ] of turtle 0 => -5.419
+  [ hidden? ] of turtle 0 => false
+
+setxy,xcor,ycor,ne
+  extensions [inf]
+  O> crt 1
+  O> ask turtles [ inf:setxy 5.4 5.4 ]
+  [ inf:xcor ] of turtle 0 => 5.4
+  [ xcor ] of turtle 0 => 5.4
+  [ inf:ycor ] of turtle 0 => 5.4
+  [ ycor ] of turtle 0 => 5.4
+  [ hidden? ] of turtle 0 => false
+  O> ask turtles [ inf:setxy 5.5 5.4 ]
+  [ inf:xcor ] of turtle 0 => 5.5
+  [ inf:ycor ] of turtle 0 => 5.4
+  [ hidden? ] of turtle 0 => true
+  O> ask turtles [ inf:setxy 5.4 5.5 ]
+  [ inf:xcor ] of turtle 0 => 5.4
+  [ inf:ycor ] of turtle 0 => 5.5
+  [ hidden? ] of turtle 0 => true
+  O> ask turtles [ inf:setxy 5.5 5.5 ]
+  [ inf:xcor ] of turtle 0 => 5.5
+  [ inf:ycor ] of turtle 0 => 5.5
+  [ hidden? ] of turtle 0 => true
+
+setxy,xcor,ycor,sw
+  extensions [inf]
+  O> crt 1
+  O> ask turtles [ inf:setxy -5.5 -5.5 ]
+  [ inf:xcor ] of turtle 0 => -5.5
+  [ xcor ] of turtle 0 => -5.5
+  [ inf:ycor ] of turtle 0 => -5.5
+  [ ycor ] of turtle 0 => -5.5
+  [ hidden? ] of turtle 0 => false
+  O> ask turtles [ inf:setxy -5.6 -5.5 ]
+  [ inf:xcor ] of turtle 0 => -5.6
+  [ inf:ycor ] of turtle 0 => -5.5
+  [ hidden? ] of turtle 0 => true
+  O> ask turtles [ inf:setxy -5.5 -5.6 ]
+  [ inf:xcor ] of turtle 0 => -5.5
+  [ inf:ycor ] of turtle 0 => -5.6
+  [ hidden? ] of turtle 0 => true
+  O> ask turtles [ inf:setxy -5.6 -5.6 ]
+  [ inf:xcor ] of turtle 0 => -5.6
+  [ inf:ycor ] of turtle 0 => -5.6
+  [ hidden? ] of turtle 0 => true
+
+
 zoom
   extensions [inf]
   O> crt 1 [ inf:setxy 1.5 2 ] inf:set-zoom 2
