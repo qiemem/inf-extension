@@ -101,7 +101,7 @@ object InfTopology {
   def toViewSize(infSize: Double): Double = infSize * zoom
 
   def setZoom(w: World, z: Double) {
-     if (z != zoom) {
+    if (z != zoom) {
       zoom = z
       updateVisibility(w)
     }

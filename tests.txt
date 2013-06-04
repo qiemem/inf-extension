@@ -1,0 +1,10 @@
+zoom
+  extensions [inf]
+  O> crt 1 [ inf:setxy 1.5 2 ] inf:set-zoom 2
+  [size] of turtle 0 => 2
+  [xcor] of turtle 0 => 3
+  [ycor] of turtle 0 => 4
+  O> inf:set-zoom .5
+  [size] of turtle 0 => 0.5
+  [xcor] of turtle 0 => 0.75
+  [ycor] of turtle 0 => 1
