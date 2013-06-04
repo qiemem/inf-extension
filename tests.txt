@@ -138,3 +138,39 @@ zoom
   [inf:xcor] of turtle 0 => 1
   [inf:ycor] of turtle 0 => -2
   [hidden?] of turtle 0 => true
+
+inf:distancexy
+  extensions [inf]
+  O> crt 1 [inf:setxy 0 0]
+  [inf:distancexy 0 0] of turtle 0 => 0
+  [inf:distancexy 1 0] of turtle 0 => 1
+  [inf:distancexy 0 1] of turtle 0 => 1
+  [inf:distancexy -1 0] of turtle 0 => 1
+  [inf:distancexy 0 -1] of turtle 0 => 1
+  precision [inf:distancexy 1 1] of turtle 0 3 => 1.414
+  precision [inf:distancexy -1 1] of turtle 0 3 => 1.414
+  precision [inf:distancexy 1 -1] of turtle 0 3 => 1.414
+  precision [inf:distancexy -1 -1] of turtle 0 3 => 1.414
+  [inf:distancexy 100 0] of turtle 0 => 100
+  [inf:distancexy 0 100] of turtle 0 => 100
+  [inf:distancexy -100 0] of turtle 0 => 100
+  [inf:distancexy 0 -100] of turtle 0 => 100
+  O> ask turtles [inf:setxy 5 -5]
+  [inf:distancexy 5 -5] of turtle 0 => 0
+  [inf:distancexy 6 -5] of turtle 0 => 1
+  [inf:distancexy 5 -4] of turtle 0 => 1
+  [inf:distancexy 4 -5] of turtle 0 => 1
+  [inf:distancexy 5 -6] of turtle 0 => 1
+  precision [inf:distancexy 6 -4] of turtle 0 3 => 1.414
+  precision [inf:distancexy 4 -4] of turtle 0 3 => 1.414
+  precision [inf:distancexy 6 -6] of turtle 0 3 => 1.414
+  precision [inf:distancexy 4 -6] of turtle 0 3 => 1.414
+
+inf:distance
+  extensions [inf]
+  O> crt 1 [inf:setxy 0 0] crt 1 [inf:setxy 1 1 ]
+  precision [inf:distance turtle 1] of turtle 0 3 => 1.414
+  O> ask turtle 0 [inf:setxy 5 -5]
+  precision [inf:distance turtle 1] of turtle 0 3 => 7.211
+  O> ask turtle 1 [inf:setxy 5 -105]
+  [inf:distance turtle 1] of turtle 0 => 100

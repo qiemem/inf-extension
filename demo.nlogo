@@ -199,10 +199,10 @@ NIL
 1
 
 MONITOR
-20
-345
-202
-390
+15
+385
+197
+430
 NIL
 inf:to-inf-xcor mouse-xcor
 5
@@ -210,10 +210,10 @@ inf:to-inf-xcor mouse-xcor
 11
 
 MONITOR
-20
-395
-202
-440
+15
+435
+197
+480
 NIL
 inf:to-inf-ycor mouse-ycor
 5
@@ -244,6 +244,23 @@ BUTTON
 323
 inf:face mouse
 inf:facexy (inf:to-inf-xcor mouse-xcor) (inf:to-inf-ycor mouse-ycor)
+T
+1
+T
+TURTLE
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+45
+325
+175
+358
+show dist to mouse
+set label precision inf:distancexy inf:to-inf-xcor mouse-xcor inf:to-inf-ycor mouse-ycor 3
 T
 1
 T
@@ -597,7 +614,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.0.4
+NetLogo 5.0.5
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
