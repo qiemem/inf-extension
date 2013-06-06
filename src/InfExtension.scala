@@ -36,6 +36,7 @@ class InfExtension extends DefaultClassManager {
     primitiveManager.addPrimitive("distance", distance _)
     primitiveManager.addPrimitive("towardsxy", towardsXY _)
     primitiveManager.addPrimitive("towards", towards _)
+    primitiveManager.addPrimitive("in-radius", inRadius _)
 
     // Turtle commands
     primitiveManager.addPrimitive("setxy", setXY _)
@@ -164,6 +165,14 @@ object InfTopology {
 
   def distance(turtle: Turtle, other: Turtle): Double =
     distanceXY(turtle, xcors(other), ycors(other))
+
+  def inRadius(turtle: Turtle, agents: AgentSet, radius: Double): AgentSet = {
+    // FIXME: This is really awful, but I can't figure out how to make an
+    // AgentSet without using agent.* stuff
+    val result = (agents.agents.asScala filter { a: Agent => distance(turtle, a.asInstanceOf[Turtle]) <= radius }).toArray
+    new agent.ArrayAgentSet(classOf[agent.Turtle], result map { _.asInstanceOf[agent.Agent] }, turtle.world.asInstanceOf[agent.World])
+  }
+
 
   def towardsXY(turtle: Turtle, x: Double, y: Double): Double = {
     val dx = x - xcors(turtle)
@@ -306,6 +315,13 @@ object PrimitiveConverters {
       func(asTurtle(context.getAgent), args(0).getDoubleValue, args(1).getDoubleValue) : java.lang.Double
   }
 
+  implicit def reporterTurtleTurtlesetDoubleAgentSet(func: (Turtle, AgentSet, Double) => AgentSet): Reporter = new DefaultReporter {
+    override def getSyntax = reporterSyntax(TurtlesetType, Array(NumberType), TurtlesetType, NormalPrecedence + 2, false)
+    override def getAgentClassString = "T"
+    override def report(args: Array[Argument], context: Context): AnyRef =
+      func(asTurtle(context.getAgent), args(0).getAgentSet, args(1).getDoubleValue)
+
+  }
 
   implicit def commandWorldDouble(func: (World, Double) => Unit): Command = new DefaultCommand {
     override def getSyntax = commandSyntax(Array(NumberType))

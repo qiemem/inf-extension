@@ -65,27 +65,10 @@ ticks
 30.0
 
 BUTTON
-20
-35
-86
-68
-NIL
-setup
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-BUTTON
 45
-220
+170
 175
-253
+203
 inf:setxy random
 inf:setxy random-normal 0 10 random-normal 0 10
 NIL
@@ -101,13 +84,13 @@ NIL
 SLIDER
 220
 25
-257
+253
 475
 zoom-exp
 zoom-exp
 -1
 1
-0
+-0.05
 .01
 1
 NIL
@@ -115,9 +98,9 @@ VERTICAL
 
 BUTTON
 75
-130
+80
 145
-165
+115
 up
 inf:set-center inf:center-xcor (inf:center-ycor + 1 / inf:zoom)
 NIL
@@ -132,9 +115,9 @@ NIL
 
 BUTTON
 75
-165
+115
 145
-200
+150
 down
 inf:set-center inf:center-xcor (inf:center-ycor - 1 / inf:zoom)
 NIL
@@ -149,9 +132,9 @@ NIL
 
 BUTTON
 10
-165
+115
 75
-200
+150
 left
 inf:set-center (inf:center-xcor - 1 / inf:zoom) inf:center-ycor
 NIL
@@ -166,9 +149,9 @@ NIL
 
 BUTTON
 145
-165
+115
 208
-200
+150
 right
 inf:set-center (inf:center-xcor + 1 / inf:zoom) inf:center-ycor
 NIL
@@ -182,10 +165,10 @@ NIL
 1
 
 BUTTON
-100
-35
-202
-68
+110
+30
+212
+63
 NIL
 mouse-pan
 T
@@ -199,10 +182,10 @@ NIL
 1
 
 MONITOR
-15
-385
-197
-430
+20
+445
+202
+490
 NIL
 inf:to-inf-xcor mouse-xcor
 5
@@ -210,10 +193,10 @@ inf:to-inf-xcor mouse-xcor
 11
 
 MONITOR
-15
-435
-197
-480
+20
+495
+202
+540
 NIL
 inf:to-inf-ycor mouse-ycor
 5
@@ -222,9 +205,9 @@ inf:to-inf-ycor mouse-ycor
 
 BUTTON
 45
-255
+205
 175
-288
+238
 NIL
 inf:fd .01
 T
@@ -239,9 +222,9 @@ NIL
 
 BUTTON
 45
-290
+240
 175
-323
+273
 inf:face mouse
 inf:facexy (inf:to-inf-xcor mouse-xcor) (inf:to-inf-ycor mouse-ycor)
 T
@@ -256,15 +239,49 @@ NIL
 
 BUTTON
 45
-325
+275
 175
-358
+308
 show dist to mouse
 set label precision inf:distancexy inf:to-inf-xcor mouse-xcor inf:to-inf-ycor mouse-ycor 3
 T
 1
 T
 TURTLE
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+45
+310
+177
+343
+avoid each other
+if any? other turtles inf:in-radius 1 [ rt random 360 ]
+T
+1
+T
+TURTLE
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+5
+30
+100
+63
+add turtles
+crt 100 [inf:setxy random-normal 0 10 random-normal 0 10]
+NIL
+1
+T
+OBSERVER
 NIL
 NIL
 NIL
