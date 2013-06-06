@@ -44,6 +44,8 @@ class InfExtension extends DefaultClassManager {
     primitiveManager.addPrimitive("set-size", setSize _)
     primitiveManager.addPrimitive("forward", forward _)
     primitiveManager.addPrimitive("fd", forward _)
+    primitiveManager.addPrimitive("backward", backward _)
+    primitiveManager.addPrimitive("bk", backward _)
     primitiveManager.addPrimitive("facexy", faceXY _)
     primitiveManager.addPrimitive("face", face _)
   }
@@ -62,6 +64,9 @@ object InfTopology {
   val xcors = new WeakHashMap[Turtle, Double]() withDefaultValue 0.0
   val ycors = new WeakHashMap[Turtle, Double]() withDefaultValue 0.0
   val sizes = new WeakHashMap[Turtle, Double]() withDefaultValue 1.0
+
+  // TODO: Come up with more sensible parameters here
+  val rootsTable = new agent.RootsTable(100, 100)
 
   def ensureTurtleAgent(turtle: Turtle) = turtle match {
     case t: agent.Turtle => t
@@ -141,11 +146,21 @@ object InfTopology {
     setXY(t, t.dx() * dist + xcors(t), t.dy() * dist + ycors(t))
   }
 
-  def distanceXY(turtle: Turtle, x: Double, y: Double): Double = {
-    val dx = x - xcors(turtle)
-    val dy = y - ycors(turtle)
-    StrictMath.sqrt(dx * dx + dy * dy)
+  def backward(turtle: Turtle, dist: Double) {
+    forward(turtle, -dist)
   }
+
+  def distanceSq(x1: Double, y1: Double, x2: Double, y2: Double): Double = {
+    val dx = x2 - x1
+    val dy = y2 - y1
+    dx * dx + dy * dy
+  }
+
+  def distance(x1: Double, y1: Double, x2: Double, y2: Double): Double =
+    rootsTable gridRoot distanceSq(x1, y1, x2, y2)
+
+  def distanceXY(turtle: Turtle, x: Double, y: Double): Double =
+    distance(xcors(turtle), ycors(turtle), x, y)
 
   def distance(turtle: Turtle, other: Turtle): Double =
     distanceXY(turtle, xcors(other), ycors(other))

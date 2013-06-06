@@ -5,6 +5,7 @@ xcor,ycor,setxy
   [ xcor ] of turtle 0 => 0
   [ inf:ycor ] of turtle 0 => 0
   [ ycor ] of turtle 0 => 0
+  O> print "hi"
   [ hidden? ] of turtle 0 => false
   O> ask turtles [ inf:setxy 2 3 ]
   [ inf:xcor ] of turtle 0 => 2
@@ -230,3 +231,57 @@ inf:towards
   [inf:towards turtle 1] of turtle 0  => 270
   O> ask turtle 1 [inf:setxy -100 100]
   [inf:towards turtle 1] of turtle 0  => 315
+
+fd,bk
+  extensions [inf]
+  O> crt 2 [inf:setxy 5 5]
+  O> ask turtle 1 [rt random 360 inf:fd 1]
+  [precision inf:distance turtle 1 14] of turtle 0 => 1
+  O> ask turtle 1 [inf:setxy 5 5]
+  O> ask turtle 1 [rt random 360 inf:fd 1]
+  [precision inf:distance turtle 1 14] of turtle 0 => 1
+  O> ask turtle 1 [inf:setxy 5 5]
+  O> ask turtle 1 [rt random 360 inf:bk 1]
+  [precision inf:distance turtle 1 14] of turtle 0 => 1
+  O> ask turtle 1 [inf:setxy 5 5]
+  O> ask turtle 1 [rt random 360 inf:fd 1]
+  [precision inf:distance turtle 1 14] of turtle 0 => 1
+  O> ask turtle 1 [inf:setxy 5 5]
+  O> ask turtle 1 [rt random 360 inf:bk 1]
+  [precision inf:distance turtle 1 14] of turtle 0 => 1
+  O> ask turtle 1 [inf:setxy 5 5]
+  O> ask turtle 1 [rt random 360 inf:fd 1]
+  [precision inf:distance turtle 1 14] of turtle 0 => 1
+  O> ask turtle 1 [inf:setxy 5 5]
+  O> ask turtle 1 [rt random 360 inf:fd 1]
+  [precision inf:distance turtle 1 14] of turtle 0 => 1
+  O> ask turtle 1 [inf:setxy 5 5]
+  O> ask turtle 1 [rt random 360 inf:fd 1]
+  [precision inf:distance turtle 1 14] of turtle 0 => 1
+  O> ask turtle 1 [inf:setxy 5 5]
+  O> ask turtle 1 [rt random 360 inf:fd 1]
+  [precision inf:distance turtle 1 14] of turtle 0 => 1
+  O> ask turtle 1 [inf:setxy 5 5]
+  O> ask turtle 1 [rt random 360 inf:fd 1]
+  [precision inf:distance turtle 1 14] of turtle 0 => 1
+  O> ask turtle 1 [inf:setxy 5 5]
+  O> ask turtle 1 [rt random 360 inf:fd 1]
+  [precision inf:distance turtle 1 14] of turtle 0 => 1
+  O> ask turtle 1 [inf:setxy 5 5]
+  O> ask turtle 1 [rt random 360 inf:fd 7]
+  [precision inf:distance turtle 1 14] of turtle 0 => 7
+  O> ask turtle 1 [inf:setxy 5 5]
+  O> ask turtle 1 [rt random 360 inf:fd 7]
+  [precision inf:distance turtle 1 14] of turtle 0 => 7
+  O> ask turtle 1 [inf:setxy 5 5]
+  O> ask turtle 1 [rt random 360 inf:fd 7]
+  [precision inf:distance turtle 1 14] of turtle 0 => 7
+  O> ask turtle 1 [inf:setxy 5 5]
+  O> ask turtle 1 [rt random 360 inf:fd 7]
+  [precision inf:distance turtle 1 14] of turtle 0 => 7
+  O> ask turtle 1 [inf:setxy 5 5]
+  O> ask turtle 1 [rt random 360 inf:fd 7]
+  [precision inf:distance turtle 1 14] of turtle 0 => 7
+  O> ask turtle 1 [inf:setxy 5 5]
+  O> ask turtle 1 [rt random 360 inf:fd 7]
+  [precision inf:distance turtle 1 14] of turtle 0 => 7

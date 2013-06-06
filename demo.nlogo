@@ -9,7 +9,7 @@ to setup
 end
 
 to update-view
-  inf:set-zoom zoom
+  inf:set-zoom (10 ^ zoom-exp)
 end
 
 to mouse-pan
@@ -38,10 +38,10 @@ to test-setxy
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-210
-10
-640
-461
+265
+25
+695
+476
 10
 10
 20.0
@@ -99,19 +99,19 @@ NIL
 1
 
 SLIDER
+220
 25
-80
-197
-113
-zoom
-zoom
-.01
-2
+257
+475
+zoom-exp
+zoom-exp
+-1
 1
+0
 .01
 1
 NIL
-HORIZONTAL
+VERTICAL
 
 BUTTON
 75
