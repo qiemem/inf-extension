@@ -169,8 +169,17 @@ object InfTopology {
   def inRadius(turtle: Turtle, agents: AgentSet, radius: Double): AgentSet = {
     // FIXME: This is really awful, but I can't figure out how to make an
     // AgentSet without using agent.* stuff
-    val result = (agents.agents.asScala filter { a: Agent => distance(turtle, a.asInstanceOf[Turtle]) <= radius }).toArray
-    new agent.ArrayAgentSet(classOf[agent.Turtle], result map { _.asInstanceOf[agent.Agent] }, turtle.world.asInstanceOf[agent.World])
+    val result = (agents.agents.asScala withFilter {
+      case t: Turtle => distance(turtle, t) <= radius
+      case _ => throw new ExtensionException("in-radius only works on turtle-sets.")
+    } map {
+      case a: agent.Agent => a
+      case a => throw new ExtensionException("Invalid agent found: " + a.toString)
+    }).toArray
+    turtle.world match {
+      case w: agent.World => new agent.ArrayAgentSet(classOf[agent.Turtle], result , w)
+      case _ => throw new ExtensionException("Invalid world found: " + turtle.world.toString)
+    }
   }
 
 

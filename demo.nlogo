@@ -90,7 +90,7 @@ zoom-exp
 zoom-exp
 -1
 1
--0.05
+0
 .01
 1
 NIL
