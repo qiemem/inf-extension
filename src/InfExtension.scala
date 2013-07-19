@@ -66,6 +66,11 @@ object InfTopology {
   val ycors = new WeakHashMap[Turtle, Double]() withDefaultValue 0.0
   val sizes = new WeakHashMap[Turtle, Double]() withDefaultValue 1.0
 
+  // For tracking pen state when the turtle is out of the view
+  val penMode = new WeakHashMap[Turtle, String]() withDefaultValue agent.Turtle.PEN_UP
+
+  val inView = new WeakHashMap[Turtle, Boolean]() withDefaultValue true
+
   // TODO: Come up with more sensible parameters here
   val rootsTable = new agent.RootsTable(100, 100)
 
@@ -85,11 +90,20 @@ object InfTopology {
     val maxYcor = w.maxPycor + 0.5  // exclusive
 
     if (xcor < minXcor || maxXcor <= xcor || ycor < minYcor || maxYcor <= ycor) {
-      turtle hidden true
+      if (inView(turtle)) {
+        penMode(turtle) = turtle.penMode
+        turtle penMode agent.Turtle.PEN_UP;
+        turtle hidden true
+        inView(turtle) = false
+      }
     } else {
-      turtle hidden false
       turtle.xandycor(xcor, ycor)
       turtle size size
+      if (!inView(turtle)) {
+        turtle hidden false
+        turtle penMode penMode(turtle)
+        inView(turtle) = true
+      }
     }
   }
 
