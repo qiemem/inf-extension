@@ -92,16 +92,16 @@ object InfTopology {
     if (xcor < minXcor || maxXcor <= xcor || ycor < minYcor || maxYcor <= ycor) {
       if (inView(turtle)) {
         penMode(turtle) = turtle.penMode
-        turtle penMode agent.Turtle.PEN_UP;
-        turtle hidden true
+        turtle.penMode(agent.Turtle.PEN_UP)
+        turtle.hidden(true)
         inView(turtle) = false
       }
     } else {
       turtle.xandycor(xcor, ycor)
-      turtle size size
+      turtle.size(size)
       if (!inView(turtle)) {
-        turtle hidden false
-        turtle penMode penMode(turtle)
+        turtle.hidden(false)
+        turtle.penMode(penMode(turtle))
         inView(turtle) = true
       }
     }
