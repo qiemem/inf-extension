@@ -49,6 +49,9 @@ class InfExtension extends DefaultClassManager {
     primitiveManager.addPrimitive("bk", backward _)
     primitiveManager.addPrimitive("facexy", faceXY _)
     primitiveManager.addPrimitive("face", face _)
+    primitiveManager.addPrimitive("move-to", moveTo _)
+    // jump is no different from forward in this context
+    primitiveManager.addPrimitive("jump", forward _) 
   }
 }
 
@@ -163,6 +166,12 @@ object InfTopology {
 
   def backward(turtle: Turtle, dist: Double) {
     forward(turtle, -dist)
+  }
+
+  def moveTo(t: Turtle, other: Turtle) {
+    xcors(t) = xcors(other)
+    ycors(t) = ycors(other)
+    updateVisibility(ensureTurtleAgent(t))
   }
 
   def distanceSq(x1: Double, y1: Double, x2: Double, y2: Double): Double = {
