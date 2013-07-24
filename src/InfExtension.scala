@@ -52,6 +52,22 @@ class InfExtension extends DefaultClassManager {
     primitiveManager.addPrimitive("move-to", moveTo _)
     // jump is no different from forward in this context
     primitiveManager.addPrimitive("jump", forward _) 
+
+    primitiveManager.addPrimitive("pen-up", penUp _)
+    primitiveManager.addPrimitive("pu", penUp _)
+    primitiveManager.addPrimitive("pen-down", penDown _)
+    primitiveManager.addPrimitive("pd", penDown _)
+    primitiveManager.addPrimitive("pen-erase", penErase _)
+    primitiveManager.addPrimitive("pe", penErase _)
+    primitiveManager.addPrimitive("pen-mode", penMode)
+    primitiveManager.addPrimitive("set-pen-mode", setPenMode _)
+
+    primitiveManager.addPrimitive("show-turtle", showTurtle _)
+    primitiveManager.addPrimitive("st", showTurtle _)
+    primitiveManager.addPrimitive("hide-turtle", hideTurtle _)
+    primitiveManager.addPrimitive("ht", hideTurtle _)
+    primitiveManager.addPrimitive("hidden?", hidden)
+    primitiveManager.addPrimitive("set-hidden?", setHidden _)
   }
 }
 
@@ -69,10 +85,8 @@ object InfTopology {
   val ycors = new WeakHashMap[Turtle, Double]() withDefaultValue 0.0
   val sizes = new WeakHashMap[Turtle, Double]() withDefaultValue 1.0
 
-  // For tracking pen state when the turtle is out of the view
   val penMode = new WeakHashMap[Turtle, String]() withDefaultValue agent.Turtle.PEN_UP
-
-  val inView = new WeakHashMap[Turtle, Boolean]() withDefaultValue true
+  val hidden = new WeakHashMap[Turtle, Boolean]() withDefaultValue false
 
   // TODO: Come up with more sensible parameters here
   val rootsTable = new agent.RootsTable(100, 100)
@@ -92,21 +106,16 @@ object InfTopology {
     val minYcor = w.minPycor - 0.5  // inclusive
     val maxYcor = w.maxPycor + 0.5  // exclusive
 
+    // TODO: Correctly draw line to edge of view if turtles pen is down when it
+    // leaves the view
     if (xcor < minXcor || maxXcor <= xcor || ycor < minYcor || maxYcor <= ycor) {
-      if (inView(turtle)) {
-        penMode(turtle) = turtle.penMode
-        turtle.penMode(agent.Turtle.PEN_UP)
-        turtle.hidden(true)
-        inView(turtle) = false
-      }
+      turtle.penMode(agent.Turtle.PEN_UP)
+      turtle.hidden(true)
     } else {
       turtle.xandycor(xcor, ycor)
       turtle.size(size)
-      if (!inView(turtle)) {
-        turtle.hidden(false)
-        turtle.penMode(penMode(turtle))
-        inView(turtle) = true
-      }
+      turtle.hidden(hidden(turtle))
+      turtle.penMode(penMode(turtle))
     }
   }
 
@@ -157,6 +166,36 @@ object InfTopology {
   def setSize(t: Turtle, s: Double) {
     sizes(t) = s
     updateVisibility(ensureTurtleAgent(t))
+  }
+
+  def showTurtle(t: Turtle) {
+    setHidden(t, false)
+  }
+
+  def hideTurtle(t: Turtle) {
+    setHidden(t, true)
+  }
+
+  def setHidden(t: Turtle, hide: Boolean) {
+    hidden(t) = hide
+    updateVisibility(ensureTurtleAgent(t))
+  }
+
+  def setPenMode(t: Turtle, mode: String) {
+    penMode(t) = mode
+    updateVisibility(ensureTurtleAgent(t))
+  }
+
+  def penDown(t: Turtle) {
+    setPenMode(t, agent.Turtle.PEN_DOWN)
+  }
+
+  def penUp(t: Turtle) {
+    setPenMode(t, agent.Turtle.PEN_UP)
+  }
+
+  def penErase(t: Turtle) {
+    setPenMode(t, agent.Turtle.PEN_ERASE)
   }
 
   def forward(turtle: Turtle, dist: Double) {
@@ -333,6 +372,20 @@ object PrimitiveConverters {
       func(asTurtle(context.getAgent)): java.lang.Double
   }
 
+  implicit def reporterTurtleString(func: (Turtle) => String): Reporter = new DefaultReporter {
+    override def getAgentClassString = "T"
+    override def getSyntax = reporterSyntax(Array(): Array[Int], StringType)
+    override def report(args: Array[Argument], context: Context): AnyRef =
+      func(asTurtle(context.getAgent)): String
+  }
+
+  implicit def reporterTurtleBoolean(func: (Turtle) => Boolean): Reporter = new DefaultReporter {
+    override def getAgentClassString = "T"
+    override def getSyntax = reporterSyntax(Array(): Array[Int], BooleanType)
+    override def report(args: Array[Argument], context: Context): AnyRef =
+      func(asTurtle(context.getAgent)): java.lang.Boolean
+  }
+
   implicit def reporterTurtleTurtleDouble(func: (Turtle, Turtle) => Double): Reporter = new DefaultReporter {
     override def getAgentClassString = "T"
     override def getSyntax = reporterSyntax(Array(TurtleType), NumberType)
@@ -367,12 +420,35 @@ object PrimitiveConverters {
       func(context.getAgent.world, args(0).getDoubleValue, args(1).getDoubleValue)
   }
 
+  implicit def commandTurtle(func: (Turtle) => Unit): Command = new DefaultCommand {
+    override def getAgentClassString = "T"
+    override def getSwitchesBoolean = true
+    override def perform(args: Array[Argument], context: Context) =
+      func(asTurtle(context.getAgent))
+  }
+
   implicit def commandTurtleDouble(func: (Turtle, Double) => Unit): Command = new DefaultCommand {
     override def getAgentClassString = "T"
     override def getSwitchesBoolean = true
     override def getSyntax = commandSyntax(Array(NumberType))
     override def perform(args: Array[Argument], context: Context) =
       func(asTurtle(context.getAgent), args(0).getDoubleValue)
+  }
+
+  implicit def commandTurtleBoolean(func: (Turtle, Boolean) => Unit): Command = new DefaultCommand {
+    override def getAgentClassString = "T"
+    override def getSwitchesBoolean = true
+    override def getSyntax = commandSyntax(Array(BooleanType))
+    override def perform(args: Array[Argument], context: Context) =
+      func(asTurtle(context.getAgent), args(0).getBooleanValue)
+  }
+
+  implicit def commandTurtleString(func: (Turtle, String) => Unit): Command = new DefaultCommand {
+    override def getAgentClassString = "T"
+    override def getSwitchesBoolean = true
+    override def getSyntax = commandSyntax(Array(NumberType))
+    override def perform(args: Array[Argument], context: Context) =
+      func(asTurtle(context.getAgent), args(0).getString)
   }
 
   implicit def commandTurtleTurtle(func: (Turtle, Turtle) => Unit): Command = new DefaultCommand {
